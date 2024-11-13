@@ -26,22 +26,24 @@ func TestCreateCsr(t *testing.T) {
 		os.Mkdir("./test", 0775)
 	}
 	for _, testCase := range testCaseCsr {
-		csr, err := CreateCsr(testCase.cfg)
-		if err != nil {
-			t.Errorf("TestCreateCsr: %v", err)
-		}
-		if csr == nil {
-			t.Errorf("TestCreateCsr: csr is nil")
-		}
-		readCsr, err := util.ReadCsr(testCase.cfg.CsrFilePath)
-		if err != nil {
-			t.Errorf("TestCreateCsr: %v", err)
-		}
-		if readCsr == nil {
-			t.Errorf("TestCreateCsr: read csr is nil")
-		}
-		if !bytes.Equal(csr, readCsr) {
-			t.Errorf("TestCreateCsr: csr is not equal")
-		}
+		t.Run(testCase.cfg.CsrFilePath, func(t *testing.T) {
+			csr, err := CreateCsr(testCase.cfg)
+			if err != nil {
+				t.Errorf("TestCreateCsr: %v", err)
+			}
+			if csr == nil {
+				t.Errorf("TestCreateCsr: csr is nil")
+			}
+			readCsr, err := util.ReadCsr(testCase.cfg.CsrFilePath)
+			if err != nil {
+				t.Errorf("TestCreateCsr: %v", err)
+			}
+			if readCsr == nil {
+				t.Errorf("TestCreateCsr: read csr is nil")
+			}
+			if !bytes.Equal(csr, readCsr) {
+				t.Errorf("TestCreateCsr: csr is not equal")
+			}
+		})
 	}
 }

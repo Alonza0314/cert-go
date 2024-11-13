@@ -22,22 +22,24 @@ func TestCreatePrivateKey(t *testing.T) {
 		os.Mkdir("./test", 0775)
 	}
 	for _, testCase := range testCasePrivateKey {
-		privateKey, err := CreatePrivateKey(testCase.keyPath)
-		if err != nil {
-			t.Errorf("TestCreatePrivateKey: %v", err)
-		}
-		if privateKey == nil {
-			t.Errorf("TestCreatePrivateKey: private key is nil")
-		}
-		readPrivateKey, err := util.ReadPrivateKey(testCase.keyPath)
-		if err != nil {
-			t.Errorf("TestCreatePrivateKey: %v", err)
-		}
-		if readPrivateKey == nil {
-			t.Errorf("TestCreatePrivateKey: read private key is nil")
-		}
-		if privateKey.D.Cmp(readPrivateKey.D) != 0 {
-			t.Errorf("TestCreatePrivateKey: private key is not equal")
-		}
+		t.Run(testCase.keyPath, func(t *testing.T) {
+			privateKey, err := CreatePrivateKey(testCase.keyPath)
+			if err != nil {
+				t.Errorf("TestCreatePrivateKey: %v", err)
+			}
+			if privateKey == nil {
+				t.Errorf("TestCreatePrivateKey: private key is nil")
+			}
+			readPrivateKey, err := util.ReadPrivateKey(testCase.keyPath)
+			if err != nil {
+				t.Errorf("TestCreatePrivateKey: %v", err)
+			}
+			if readPrivateKey == nil {
+				t.Errorf("TestCreatePrivateKey: read private key is nil")
+			}
+			if privateKey.D.Cmp(readPrivateKey.D) != 0 {
+				t.Errorf("TestCreatePrivateKey: private key is not equal")
+			}
+		})
 	}
 }
