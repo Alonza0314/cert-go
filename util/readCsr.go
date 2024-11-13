@@ -9,7 +9,7 @@ import (
 	"github.com/Alonza0314/cert-go/logger"
 )
 
-func ReadCsr(csrPath string) ([]byte, error) {
+func ReadCsr(csrPath string) (*x509.CertificateRequest, error) {
 	csrPEM, err := os.ReadFile(csrPath)
 	if err != nil {
 		logger.Error("ReadCsr: " + err.Error())
@@ -38,5 +38,5 @@ func ReadCsr(csrPath string) ([]byte, error) {
 		return nil, err
 	}
 
-	return block.Bytes, nil
+	return csr, nil
 }

@@ -67,25 +67,24 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 		logger.Info("signCertificate: root certificate created")
 	} else {
 		// intermediate certificate or end-entity certificate
-		var csrData []byte
+		var csr *x509.CertificateRequest
 		if !util.FileExists(cfg.CsrFilePath) {
 			logger.Warn("signCertificate: CSR file does not exist")
-			csrData, err = CreateCsr(cfg)
+			csr, err = CreateCsr(cfg)
 			if err != nil {
 				logger.Error("signCertificate: " + err.Error())
 				return nil, err
 			}
 		}
-		if csrData == nil {
-			csrData, err = util.ReadCsr(cfg.CsrFilePath)
+		if csr == nil {
+			csr, err = util.ReadCsr(cfg.CsrFilePath)
 			if err != nil {
 				logger.Error("signCertificate: " + err.Error())
 				return nil, err
 			}
 		}
 
-		csr, err := x509.ParseCertificateRequest(csrData)
-		if err != nil {
+		if err := csr.CheckSignature(); err != nil {
 			logger.Error("signCertificate: " + err.Error())
 			return nil, err
 		}

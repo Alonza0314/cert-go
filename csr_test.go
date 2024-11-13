@@ -1,8 +1,9 @@
 package certgo
 
 import (
-	"bytes"
+	"crypto/x509"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/Alonza0314/cert-go/model"
@@ -11,7 +12,7 @@ import (
 
 var testCaseCsr = []struct {
 	cfg    model.Certificate
-	expect []byte
+	expect *x509.CertificateRequest
 }{
 	{
 		cfg: model.Certificate{
@@ -25,13 +26,14 @@ func TestCreateCsr(t *testing.T) {
 	if !util.FileExists("./test") {
 		os.Mkdir("./test", 0775)
 	}
+	var err error
 	for _, testCase := range testCaseCsr {
 		t.Run(testCase.cfg.CsrFilePath, func(t *testing.T) {
-			csr, err := CreateCsr(testCase.cfg)
+			testCase.expect, err = CreateCsr(testCase.cfg)
 			if err != nil {
 				t.Fatalf("TestCreateCsr: %v", err)
 			}
-			if csr == nil {
+			if testCase.expect == nil {
 				t.Fatalf("TestCreateCsr: csr is nil")
 			}
 			readCsr, err := util.ReadCsr(testCase.cfg.CsrFilePath)
@@ -41,7 +43,7 @@ func TestCreateCsr(t *testing.T) {
 			if readCsr == nil {
 				t.Fatalf("TestCreateCsr: read csr is nil")
 			}
-			if !bytes.Equal(csr, readCsr) {
+			if !reflect.DeepEqual(testCase.expect, readCsr) {
 				t.Fatalf("TestCreateCsr: csr is not equal")
 			}
 		})

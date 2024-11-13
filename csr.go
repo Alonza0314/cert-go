@@ -12,7 +12,7 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-func CreateCsr(cfg model.Certificate) ([]byte, error) {
+func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
 	var privateKey *ecdsa.PrivateKey
 	var err error
 
@@ -61,5 +61,11 @@ func CreateCsr(cfg model.Certificate) ([]byte, error) {
 	}
 
 	logger.Info("CreateCsr: csr created")
-	return csrBytes, nil
+
+	csr, err := x509.ParseCertificateRequest(csrBytes)
+	if err != nil {
+		logger.Error("CreateCsr: " + err.Error())
+		return nil, err
+	}
+	return csr, nil
 }
