@@ -4,6 +4,27 @@ This package is a golang command line tool implementation of self-signing certif
 
 Also, we expected to link third party CA certificates to generate certificates in the future.
 
+## Roadmap
+
+```mermaid
+gantt
+    title cert-go
+    dateFormat MM-DD
+        axisFormat %m-%d
+
+    section self-signing
+    private key: active, private-key, 11-13, 1d
+    csr: active, csr, 11-13, 1d
+    certificate: active, certificate, 11-13, 2d
+
+    section cobra cmd
+    cobra cmd: active, cobra-cmd, 11-14, 2d
+    test: done, test, 11-15, 3d
+
+    section third party
+    third party: crit, third-party, 11-18, 1d
+```
+
 ## Develop Environment
 
 |Type|Version|
