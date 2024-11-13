@@ -13,13 +13,13 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-func signCertificate(cfg model.Certificate) error {
+func signCertificate(cfg model.Certificate) ([]byte,error) {
 	// create certificate template
 	var template *x509.Certificate
 	serialNumber, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), 128))
 	if err != nil {
 		logger.Error("signCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
 
 	notBefore := time.Now()
@@ -46,7 +46,7 @@ func signCertificate(cfg model.Certificate) error {
 		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, cfg.ParentKey, cfg.ParentCert)
 		if err != nil {
 			logger.Error("signCertificate: " + err.Error())
-			return err
+			return nil, err
 		}
 		logger.Info("signCertificate: root certificate created")
 	} else {
@@ -57,7 +57,7 @@ func signCertificate(cfg model.Certificate) error {
 			csrData, err = CreateCsr(cfg)
 			if err != nil {
 				logger.Error("signCertificate: " + err.Error())
-				return err
+				return nil, err
 			}
 		}
 
@@ -66,20 +66,20 @@ func signCertificate(cfg model.Certificate) error {
 			csrData, err = util.ReadCsr(cfg.CsrFilePath)
 			if err != nil {
 				logger.Error("signCertificate: " + err.Error())
-				return err
+				return nil, err
 			}
 		}
 		csr, err := x509.ParseCertificateRequest(csrData)
 		if err != nil {
 			logger.Error("signCertificate: " + err.Error())
-			return err
+			return nil, err
 		}
 
 		// sign certificate with parent certificate
 		certBytes, err = x509.CreateCertificate(rand.Reader, template, cfg.ParentCert, csr.PublicKey, cfg.ParentKey)
 		if err != nil {
 			logger.Error("signCertificate: " + err.Error())
-			return err
+			return nil, err
 		}
 		logger.Info("signCertificate: intermediate certificate created")
 	}
@@ -92,10 +92,10 @@ func signCertificate(cfg model.Certificate) error {
 
 	if err := util.FileWrite(cfg.CertFilePath, certPEM, 0644); err != nil {
 		logger.Error("signCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
 
-	return nil
+	return certBytes, nil
 }
 
 func SignRootCertificate(yamlPath string) error {
