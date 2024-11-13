@@ -18,7 +18,7 @@ var testCasePrivateKey = []struct {
 }
 
 func TestCreatePrivateKey(t *testing.T) {
-	if _, err := os.Stat("./test"); os.IsNotExist(err) {
+	if !util.FileExists("./test") {
 		os.Mkdir("./test", 0775)
 	}
 	for _, testCase := range testCasePrivateKey {
