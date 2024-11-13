@@ -8,7 +8,7 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-var testCases = []struct {
+var testCasePrivateKey = []struct {
 	keyPath string
 	expect  *ecdsa.PrivateKey
 }{
@@ -21,7 +21,7 @@ func TestCreatePrivateKey(t *testing.T) {
 	if _, err := os.Stat("./test"); os.IsNotExist(err) {
 		os.Mkdir("./test", 0775)
 	}
-	for _, testCase := range testCases {
+	for _, testCase := range testCasePrivateKey {
 		privateKey, err := CreatePrivateKey(testCase.keyPath)
 		if err != nil {
 			t.Errorf("TestCreatePrivateKey: %v", err)
