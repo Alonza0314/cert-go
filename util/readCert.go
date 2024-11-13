@@ -9,8 +9,7 @@ import (
 	"github.com/Alonza0314/cert-go/logger"
 )
 
-func ReadCertificate(certPath string) ([]byte, error) {
-	// 讀取憑證檔案
+func ReadCertificate(certPath string) (*x509.Certificate, error) {
 	certBytes, err := os.ReadFile(certPath)
 	if err != nil {
 		logger.Error("ReadCertificate: " + err.Error())
@@ -23,12 +22,11 @@ func ReadCertificate(certPath string) ([]byte, error) {
 		return nil, errors.New("failed to decode PEM block")
 	}
 
-
-	_, err = x509.ParseCertificate(block.Bytes)
+	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
 		logger.Error("ReadCertificate: " + err.Error())
 		return nil, err
 	}
 
-	return block.Bytes, nil
+	return cert, nil
 }

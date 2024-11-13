@@ -13,7 +13,7 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-func signCertificate(cfg model.Certificate) ([]byte,error) {
+func signCertificate(cfg model.Certificate) ([]byte, error) {
 	// create certificate template
 	var template *x509.Certificate
 	serialNumber, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), 128))
@@ -43,7 +43,23 @@ func signCertificate(cfg model.Certificate) ([]byte,error) {
 
 	if cfg.Type == "root" {
 		// root certificate self-signed
-		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, cfg.ParentKey, cfg.ParentCert)
+		if !util.FileExists(cfg.KeyFilePath) {
+			logger.Warn("signCertificate: private key does not exist")
+			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath)
+			if err != nil {
+				logger.Error("signCertificate: " + err.Error())
+				return nil, err
+			}
+		}
+		if cfg.ParentKey == nil {
+			cfg.ParentKey, err = util.ReadPrivateKey(cfg.KeyFilePath)
+			if err != nil {
+				logger.Error("signCertificate: " + err.Error())
+				return nil, err
+			}
+		}
+
+		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, &cfg.ParentKey.PublicKey, cfg.ParentKey)
 		if err != nil {
 			logger.Error("signCertificate: " + err.Error())
 			return nil, err
@@ -60,8 +76,6 @@ func signCertificate(cfg model.Certificate) ([]byte,error) {
 				return nil, err
 			}
 		}
-
-		// read CSR
 		if csrData == nil {
 			csrData, err = util.ReadCsr(cfg.CsrFilePath)
 			if err != nil {
@@ -69,7 +83,22 @@ func signCertificate(cfg model.Certificate) ([]byte,error) {
 				return nil, err
 			}
 		}
+
 		csr, err := x509.ParseCertificateRequest(csrData)
+		if err != nil {
+			logger.Error("signCertificate: " + err.Error())
+			return nil, err
+		}
+
+		// read parent cert
+		cfg.ParentCert, err = util.ReadCertificate(cfg.ParentCertPath)
+		if err != nil {
+			logger.Error("signCertificate: " + err.Error())
+			return nil, err
+		}
+
+		// read parent key
+		cfg.ParentKey, err = util.ReadPrivateKey(cfg.ParentKeyPath)
 		if err != nil {
 			logger.Error("signCertificate: " + err.Error())
 			return nil, err
@@ -95,61 +124,61 @@ func signCertificate(cfg model.Certificate) ([]byte,error) {
 		return nil, err
 	}
 
+	return certPEM, nil
+}
+
+func SignRootCertificate(yamlPath string) ([]byte, error) {
+	var cfg model.CAConfig
+	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+		logger.Error("SignRootCertificate: " + err.Error())
+		return nil, err
+	}
+	certBytes, err := signCertificate(cfg.CA.Root)
+	if err != nil {
+		logger.Error("SignRootCertificate: " + err.Error())
+		return nil, err
+	}
 	return certBytes, nil
 }
 
-func SignRootCertificate(yamlPath string) error {
-	var cfg model.CAConfig
-	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
-		logger.Error("SignRootCertificate: " + err.Error())
-		return err
-	}
-	_, err := signCertificate(cfg.CA.Root)
-	if err != nil {
-		logger.Error("SignRootCertificate: " + err.Error())
-		return err
-	}
-	return nil
-}
-
-func SignIntermediateCertificate(yamlPath string) error {
+func SignIntermediateCertificate(yamlPath string) ([]byte, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		logger.Error("SignIntermediateCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
-	_, err := signCertificate(cfg.CA.Intermediate)
+	certBytes, err := signCertificate(cfg.CA.Intermediate)
 	if err != nil {
 		logger.Error("SignIntermediateCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
-	return nil
+	return certBytes, nil
 }
 
-func SignServerCertificate(yamlPath string) error {
+func SignServerCertificate(yamlPath string) ([]byte, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		logger.Error("SignServerCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
-	_, err := signCertificate(cfg.CA.Server)
+	certBytes, err := signCertificate(cfg.CA.Server)
 	if err != nil {
 		logger.Error("SignServerCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
-	return nil
+	return certBytes, nil
 }
 
-func SignClientCertificate(yamlPath string) error {
+func SignClientCertificate(yamlPath string) ([]byte, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		logger.Error("SignClientCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
-	_, err := signCertificate(cfg.CA.Client)
+	certBytes, err := signCertificate(cfg.CA.Client)
 	if err != nil {
 		logger.Error("SignClientCertificate: " + err.Error())
-		return err
+		return nil, err
 	}
-	return nil
+	return certBytes, nil
 }
