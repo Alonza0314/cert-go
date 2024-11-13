@@ -104,7 +104,12 @@ func SignRootCertificate(yamlPath string) error {
 		logger.Error("SignRootCertificate: " + err.Error())
 		return err
 	}
-	return signCertificate(cfg.CA.Root)
+	_, err := signCertificate(cfg.CA.Root)
+	if err != nil {
+		logger.Error("SignRootCertificate: " + err.Error())
+		return err
+	}
+	return nil
 }
 
 func SignIntermediateCertificate(yamlPath string) error {
@@ -113,7 +118,12 @@ func SignIntermediateCertificate(yamlPath string) error {
 		logger.Error("SignIntermediateCertificate: " + err.Error())
 		return err
 	}
-	return signCertificate(cfg.CA.Intermediate)
+	_, err := signCertificate(cfg.CA.Intermediate)
+	if err != nil {
+		logger.Error("SignIntermediateCertificate: " + err.Error())
+		return err
+	}
+	return nil
 }
 
 func SignServerCertificate(yamlPath string) error {
@@ -122,7 +132,12 @@ func SignServerCertificate(yamlPath string) error {
 		logger.Error("SignServerCertificate: " + err.Error())
 		return err
 	}
-	return signCertificate(cfg.CA.Server)
+	_, err := signCertificate(cfg.CA.Server)
+	if err != nil {
+		logger.Error("SignServerCertificate: " + err.Error())
+		return err
+	}
+	return nil
 }
 
 func SignClientCertificate(yamlPath string) error {
@@ -131,5 +146,10 @@ func SignClientCertificate(yamlPath string) error {
 		logger.Error("SignClientCertificate: " + err.Error())
 		return err
 	}
-	return signCertificate(cfg.CA.Client)
+	_, err := signCertificate(cfg.CA.Client)
+	if err != nil {
+		logger.Error("SignClientCertificate: " + err.Error())
+		return err
+	}
+	return nil
 }
