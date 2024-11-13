@@ -36,5 +36,6 @@ func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
 		return nil, err
 	}
 
+	logger.Info("CreatePrivateKey: private key created")
 	return privateKey, nil
 }
