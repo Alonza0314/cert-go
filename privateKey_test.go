@@ -13,7 +13,7 @@ var testCasePrivateKey = []struct {
 	expect  *ecdsa.PrivateKey
 }{
 	{
-		keyPath: "./test/test_key.pem",
+		keyPath: "./default_ca/test_key.pem",
 	},
 }
 

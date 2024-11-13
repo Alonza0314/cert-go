@@ -18,22 +18,22 @@ var testCaseCert = []struct {
 }{
 	{
 		name:     "root",
-		yamlPath: "./cfg.yml",
+		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/root/root_cert.pem",
 	},
 	{
 		name:     "intermediate",
-		yamlPath: "./cfg.yml",
+		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/intermediate/intermediate_cert.pem",
 	},
 	{
 		name:     "server",
-		yamlPath: "./cfg.yml",
+		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/server/server_cert.pem",
 	},
 	{
 		name:     "client",
-		yamlPath: "./cfg.yml",
+		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/client/client_cert.pem",
 	},
 }
