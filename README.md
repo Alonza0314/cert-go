@@ -2,7 +2,7 @@
 
 This package is a golang command line tool implementation of self-signing certificates.
 
-Also, we expected to link third party CA certificates to the generated certificates in the future.
+Also, we expected to link third party CA certificates to generate certificates in the future.
 
 ## Develop Environment
 
