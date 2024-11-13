@@ -15,6 +15,8 @@ ca:
     cert: ./default_ca/intermediate/intermediate_cert.pem
     private_key: ./default_ca/intermediate/intermediate_key.pem
     csr: ./default_ca/intermediate/intermediate_csr.pem
+    parent_cert: ./default_ca/root/root_cert.pem
+    parent_key: ./default_ca/root/root_key.pem
     is_ca: true
     organization: "default_ca"
     common_name: "default_ca"
@@ -26,6 +28,8 @@ ca:
     cert: ./default_ca/server/server_cert.pem
     private_key: ./default_ca/server/server_key.pem
     csr: ./default_ca/server/server_csr.pem
+    parent_cert: ./default_ca/intermediate/intermediate_cert.pem
+    parent_key: ./default_ca/intermediate/intermediate_key.pem
     is_ca: false
     organization: "default_ca"
     common_name: "default_ca"
@@ -37,6 +41,8 @@ ca:
     cert: ./default_ca/client/client_cert.pem
     private_key: ./default_ca/client/client_key.pem
     csr: ./default_ca/client/client_csr.pem
+    parent_cert: ./default_ca/intermediate/intermediate_cert.pem
+    parent_key: ./default_ca/intermediate/intermediate_key.pem
     is_ca: false
     organization: "default_ca"
     common_name: "default_ca"

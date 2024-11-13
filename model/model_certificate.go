@@ -22,8 +22,11 @@ type Certificate struct {
 	KeyFilePath  string `yaml:"private_key"`
 	CsrFilePath  string `yaml:"csr"`
 
-	ParentCert    *x509.Certificate
-	ParentKey     *ecdsa.PrivateKey
+	ParentCertPath string `yaml:"parent_cert"`
+	ParentKeyPath  string `yaml:"parent_key"`
+	ParentCert     *x509.Certificate
+	ParentKey      *ecdsa.PrivateKey
+
 	IsCA          bool   `yaml:"is_ca"`
 	Organization  string `yaml:"organization"`
 	CommonName    string `yaml:"common_name"`
