@@ -10,7 +10,7 @@ import (
 func ReadYamlFile(filePath string) (map[string]interface{}, error) {
 	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
-		logger.Error("read yaml file error: " + err.Error())
+		logger.Error("ReadYamlFile: " + err.Error())
 		return nil, err
 	}
 
@@ -18,7 +18,7 @@ func ReadYamlFile(filePath string) (map[string]interface{}, error) {
 
 	err = yaml.Unmarshal(yamlFile, &data)
 	if err != nil {
-		logger.Error("parse yaml file error: " + err.Error())
+		logger.Error("ReadYamlFile: " + err.Error())
 		return nil, err
 	}
 
