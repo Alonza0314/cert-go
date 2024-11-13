@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
-	"os"
 
 	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/model"
@@ -56,7 +55,7 @@ func CreateCsr(cfg model.Certificate) ([]byte, error) {
 	})
 
 	// save csr
-	if err := os.WriteFile(cfg.CsrFilePath, csrPEM, 0644); err != nil {
+	if err := util.FileWrite(cfg.CsrFilePath, csrPEM, 0644); err != nil {
 		logger.Error("CreateCsr: " + err.Error())
 		return nil, err
 	}

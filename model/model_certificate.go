@@ -17,6 +17,8 @@ type Certificate struct {
 	Organization  string
 	CommonName    string
 	ValidityYears int
+	ValidityMonth int
+	ValidityDay   int
 	KeyUsage      x509.KeyUsage
 	ExtKeyUsage   []x509.ExtKeyUsage
 }

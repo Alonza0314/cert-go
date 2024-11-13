@@ -6,9 +6,9 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/pem"
-	"os"
 
 	"github.com/Alonza0314/cert-go/logger"
+	"github.com/Alonza0314/cert-go/util"
 )
 
 func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
@@ -31,7 +31,7 @@ func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
 	})
 
 	// save private key
-	if err := os.WriteFile(keyPath, keyPEM, 0644); err != nil {
+	if err := util.FileWrite(keyPath, keyPEM, 0644); err != nil {
 		logger.Error("CreatePrivateKey: " + err.Error())
 		return nil, err
 	}
