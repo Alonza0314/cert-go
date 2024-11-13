@@ -4,6 +4,8 @@ import (
 	"crypto/ecdsa"
 	"os"
 	"testing"
+
+	"github.com/Alonza0314/cert-go/util"
 )
 
 var testCases = []struct {
@@ -20,12 +22,22 @@ func TestCreatePrivateKey(t *testing.T) {
 		os.Mkdir("./test", 0775)
 	}
 	for _, testCase := range testCases {
-		actual, err := CreatePrivateKey(testCase.keyPath)
+		privateKey, err := CreatePrivateKey(testCase.keyPath)
 		if err != nil {
 			t.Errorf("TestCreatePrivateKey: %v", err)
 		}
-		if actual == nil {
+		if privateKey == nil {
 			t.Errorf("TestCreatePrivateKey: private key is nil")
+		}
+		readPrivateKey, err := util.ReadPrivateKey(testCase.keyPath)
+		if err != nil {
+			t.Errorf("TestCreatePrivateKey: %v", err)
+		}
+		if readPrivateKey == nil {
+			t.Errorf("TestCreatePrivateKey: read private key is nil")
+		}
+		if privateKey.D.Cmp(readPrivateKey.D) != 0 {
+			t.Errorf("TestCreatePrivateKey: private key is not equal")
 		}
 	}
 }
