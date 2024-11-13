@@ -42,10 +42,10 @@ func TestReadYamlFile(t *testing.T) {
 	for _, testCase := range testCaseMap {
 		data, err := ReadYamlFile(testCase.filePath)
 		if err != nil {
-			t.Errorf("read yaml file error: %v", err)
+			t.Errorf("TestReadYamlFile: %v", err)
 		}
 		if !reflect.DeepEqual(data, testCase.expect) {
-			t.Errorf("read yaml file error: %v", err)
+			t.Errorf("TestReadYamlFile: actual %v != expect %v", data, testCase.expect)
 		}
 	}
 }
