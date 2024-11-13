@@ -12,7 +12,7 @@ var testCaseMap = []struct {
 	expect   map[string]interface{}
 }{
 	{
-		filePath: "../cfg.yml",
+		filePath: "../defaultCfg.yml",
 		expect: map[string]interface{}{
 			"ca": map[string]interface{}{
 				"root": map[string]interface{}{
@@ -79,7 +79,7 @@ var testCaseStruct = []struct {
 	expect   model.CAConfig
 }{
 	{
-		filePath: "../cfg.yml",
+		filePath: "../defaultCfg.yml",
 		expect: model.CAConfig{
 			CA: model.CertificateAuthority{
 				Root: model.Certificate{
