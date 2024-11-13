@@ -25,20 +25,20 @@ func TestCreatePrivateKey(t *testing.T) {
 		t.Run(testCase.keyPath, func(t *testing.T) {
 			privateKey, err := CreatePrivateKey(testCase.keyPath)
 			if err != nil {
-				t.Errorf("TestCreatePrivateKey: %v", err)
+				t.Fatalf("TestCreatePrivateKey: %v", err)
 			}
 			if privateKey == nil {
-				t.Errorf("TestCreatePrivateKey: private key is nil")
+				t.Fatalf("TestCreatePrivateKey: private key is nil")
 			}
 			readPrivateKey, err := util.ReadPrivateKey(testCase.keyPath)
 			if err != nil {
-				t.Errorf("TestCreatePrivateKey: %v", err)
+				t.Fatalf("TestCreatePrivateKey: %v", err)
 			}
 			if readPrivateKey == nil {
-				t.Errorf("TestCreatePrivateKey: read private key is nil")
+				t.Fatalf("TestCreatePrivateKey: read private key is nil")
 			}
 			if privateKey.D.Cmp(readPrivateKey.D) != 0 {
-				t.Errorf("TestCreatePrivateKey: private key is not equal")
+				t.Fatalf("TestCreatePrivateKey: private key is not equal")
 			}
 		})
 	}

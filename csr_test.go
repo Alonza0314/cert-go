@@ -29,20 +29,20 @@ func TestCreateCsr(t *testing.T) {
 		t.Run(testCase.cfg.CsrFilePath, func(t *testing.T) {
 			csr, err := CreateCsr(testCase.cfg)
 			if err != nil {
-				t.Errorf("TestCreateCsr: %v", err)
+				t.Fatalf("TestCreateCsr: %v", err)
 			}
 			if csr == nil {
-				t.Errorf("TestCreateCsr: csr is nil")
+				t.Fatalf("TestCreateCsr: csr is nil")
 			}
 			readCsr, err := util.ReadCsr(testCase.cfg.CsrFilePath)
 			if err != nil {
-				t.Errorf("TestCreateCsr: %v", err)
+				t.Fatalf("TestCreateCsr: %v", err)
 			}
 			if readCsr == nil {
-				t.Errorf("TestCreateCsr: read csr is nil")
+				t.Fatalf("TestCreateCsr: read csr is nil")
 			}
 			if !bytes.Equal(csr, readCsr) {
-				t.Errorf("TestCreateCsr: csr is not equal")
+				t.Fatalf("TestCreateCsr: csr is not equal")
 			}
 		})
 	}
