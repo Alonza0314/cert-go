@@ -26,3 +26,17 @@ Flags:
   -t, --type string   specify the type of the certificate: [intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path
 ```
+
+## certificate
+
+```bash
+used to create certificate, you need to specify the configuration yaml file path
+
+Usage:
+  cert-go create cert [flags]
+
+Flags:
+  -h, --help          help for cert
+  -t, --type string   specify the type of the certificate: [root, intermediate, server, client]
+  -y, --yaml string   specify the configuration yaml file path
+```
