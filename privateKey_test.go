@@ -2,7 +2,6 @@ package certgo
 
 import (
 	"crypto/ecdsa"
-	"os"
 	"testing"
 
 	"github.com/Alonza0314/cert-go/util"
@@ -18,9 +17,6 @@ var testCasePrivateKey = []struct {
 }
 
 func TestCreatePrivateKey(t *testing.T) {
-	if !util.FileExists("./test") {
-		os.Mkdir("./test", 0775)
-	}
 	for _, testCase := range testCasePrivateKey {
 		t.Run(testCase.keyPath, func(t *testing.T) {
 			privateKey, err := CreatePrivateKey(testCase.keyPath)

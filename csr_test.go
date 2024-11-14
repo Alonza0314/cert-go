@@ -2,7 +2,6 @@ package certgo
 
 import (
 	"crypto/x509"
-	"os"
 	"reflect"
 	"testing"
 
@@ -23,9 +22,6 @@ var testCaseCsr = []struct {
 }
 
 func TestCreateCsr(t *testing.T) {
-	if !util.FileExists("./test") {
-		os.Mkdir("./test", 0775)
-	}
 	var err error
 	for _, testCase := range testCaseCsr {
 		t.Run(testCase.cfg.CsrFilePath, func(t *testing.T) {
