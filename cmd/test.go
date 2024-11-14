@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// testCmd represents the test command
 var testCmd = &cobra.Command{
 	Use:   "test",
 	Short: "test command has no actual function",
