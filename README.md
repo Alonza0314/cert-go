@@ -96,7 +96,6 @@ gantt
 ## Test
 
 ```bash
-mkdir -p ./default_ca/root ./default_ca/intermediate ./default_ca/server ./default_ca/client
 go test ./... -v
 ```
 
