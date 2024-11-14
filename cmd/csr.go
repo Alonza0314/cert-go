@@ -41,12 +41,12 @@ func createCsr(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	logger.Info("CMD", "start to create csr")
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+		logger.Error("CMD", "failed to create csr")
 		return
 	}
-
-	logger.Info("CMD", "start to create csr")
 	switch csrType {
 	case "intermediate":
 		_, err = certgo.CreateCsr(cfg.CA.Intermediate)
