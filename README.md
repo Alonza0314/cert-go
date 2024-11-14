@@ -12,16 +12,17 @@ gantt
     dateFormat MM-DD
         axisFormat %m-%d
 
-    section self-signing
+    section v1.0.0
     private key: active, private-key, 11-13, 1d
     csr: active, csr, 11-13, 1d
     certificate: active, certificate, 11-13, 2d
+    Release: milestone, after certificate
 
-    section cobra cmd
+    section v2.0.0
     cobra cmd: active, cobra-cmd, 11-14, 2d
     test: done, test, 11-15, 3d
 
-    section third party
+    section v3.0.0
     third party: crit, third-party, 11-18, 1d
 ```
 
