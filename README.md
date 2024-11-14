@@ -38,7 +38,7 @@ gantt
 
 2. Modify the `cfg.yml` file to set the appropriate values(you can use the `defaultCfg.yml` file as your template).
 
-   [Click here to see the defaultconfiguration file](./defaultCfg.yml)
+   [Click here to see the default configuration file](./defaultCfg.yml)
 
 3. Import the `certgo` package in your code.
 
@@ -52,9 +52,7 @@ gantt
     CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error)
     ```
 
-   [click to see the example](./example/create_privateKey/)
-
-5. For create csr, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the [certificate structure](./model/model_certificate.go).
+5. For create csr, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the certificate structure.
 
     ```go
     util.ReadYamlFileToStruct(yamlPath string, v interface{}) error
@@ -66,8 +64,6 @@ gantt
     CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error)
     ```
 
-    [click to see the example](./example/create_csr/)
-
 6. For sign certificate, you need to specify the yaml file path of the CA configuration. Then, use these functions for different types of certificates:
 
     ```go
@@ -77,9 +73,11 @@ gantt
     SignClientCertificate(yamlPath string) ([]byte, error)
     ```
 
-    [click to see the example](./example/sign_certificate/)
-
 7. In the end, it is expected to see the private key, certificate, and csr in the destination directory.
+
+## Example
+
+[Click here to see the example](./example/)
 
 ## Test
 
