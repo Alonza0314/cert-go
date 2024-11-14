@@ -1,1 +1,6 @@
 default_ca/
+
+*.pem
+*.csr
+*.key
+*.crt
