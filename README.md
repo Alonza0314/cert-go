@@ -52,6 +52,8 @@ gantt
     CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error)
     ```
 
+    The return value is the private key in `*ecdsa.PrivateKey` type.
+
 5. For create csr, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the certificate structure.
 
     ```go
@@ -64,6 +66,8 @@ gantt
     CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error)
     ```
 
+    The return value is the csr in `*x509.CertificateRequest` type.
+
 6. For sign certificate, you need to specify the yaml file path of the CA configuration. Then, use these functions for different types of certificates:
 
     ```go
@@ -72,6 +76,8 @@ gantt
     SignServerCertificate(yamlPath string) ([]byte, error)
     SignClientCertificate(yamlPath string) ([]byte, error)
     ```
+
+    The return value is the signed certificate in `[]byte` type after encoding to PEM format.
 
 7. In the end, it is expected to see the private key, certificate, and csr in the destination directory.
 
