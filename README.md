@@ -55,7 +55,7 @@ gantt
 5. For create csr, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the [certificate structure](./model/model_certificate.go).
 
     ```go
-    model.ReadYamlFileToStruct(yamlPath string, v interface{}) error
+    util.ReadYamlFileToStruct(yamlPath string, v interface{}) error
     ```
 
     Then, use this function:
