@@ -19,8 +19,8 @@ gantt
     Release: milestone, after certificate
 
     section v2.0.0
-    cobra cmd: active, cobra-cmd, 11-14, 2d
-    test: done, test, 11-15, 1d
+    cobra cmd: active, cobra-cmd, 11-14, 1d
+    test: done, test, 11-14, 2d
     Release: milestone, after test
 
     section v2.x.x
