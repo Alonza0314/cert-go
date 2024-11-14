@@ -6,7 +6,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/util"
 )
 
@@ -41,8 +40,7 @@ var testCaseCert = []struct {
 func TestSignCertificate(t *testing.T) {
 	var err error
 	for _, testCase := range testCaseCert {
-		t.Run(testCase.yamlPath, func(t *testing.T) {
-			logger.Info("TestCaseSignCertificate", testCase.name)
+		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
 			case "root":
 				testCase.expect, err = SignRootCertificate(testCase.yamlPath)

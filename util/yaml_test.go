@@ -8,10 +8,12 @@ import (
 )
 
 var testCaseMap = []struct {
+	name     string
 	filePath string
 	expect   map[string]interface{}
 }{
 	{
+		name:     "default",
 		filePath: "../defaultCfg.yml",
 		expect: map[string]interface{}{
 			"ca": map[string]interface{}{
@@ -75,10 +77,12 @@ var testCaseMap = []struct {
 }
 
 var testCaseStruct = []struct {
+	name     string
 	filePath string
 	expect   model.CAConfig
 }{
 	{
+		name:     "default",
 		filePath: "../defaultCfg.yml",
 		expect: model.CAConfig{
 			CA: model.CertificateAuthority{
@@ -143,7 +147,7 @@ var testCaseStruct = []struct {
 
 func TestReadYamlFile(t *testing.T) {
 	for _, testCase := range testCaseMap {
-		t.Run(testCase.filePath, func(t *testing.T) {
+		t.Run(testCase.name, func(t *testing.T) {
 			data, err := ReadYamlFile(testCase.filePath)
 			if err != nil {
 				t.Errorf("TestReadYamlFile: %v", err)
@@ -157,7 +161,7 @@ func TestReadYamlFile(t *testing.T) {
 
 func TestReadYamlFileToStruct(t *testing.T) {
 	for _, testCase := range testCaseStruct {
-		t.Run(testCase.filePath, func(t *testing.T) {
+		t.Run(testCase.name, func(t *testing.T) {
 			var actual model.CAConfig
 			err := ReadYamlFileToStruct(testCase.filePath, &actual)
 			if err != nil {

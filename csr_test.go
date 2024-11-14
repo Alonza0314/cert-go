@@ -10,10 +10,12 @@ import (
 )
 
 var testCaseCsr = []struct {
+	name   string
 	cfg    model.Certificate
 	expect *x509.CertificateRequest
 }{
 	{
+		name: "test",
 		cfg: model.Certificate{
 			KeyFilePath: "./default_ca/test_key.pem",
 			CsrFilePath: "./default_ca/test_csr.pem",
@@ -24,7 +26,7 @@ var testCaseCsr = []struct {
 func TestCreateCsr(t *testing.T) {
 	var err error
 	for _, testCase := range testCaseCsr {
-		t.Run(testCase.cfg.CsrFilePath, func(t *testing.T) {
+		t.Run(testCase.name, func(t *testing.T) {
 			testCase.expect, err = CreateCsr(testCase.cfg)
 			if err != nil {
 				t.Fatalf("TestCreateCsr: %v", err)

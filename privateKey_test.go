@@ -8,17 +8,19 @@ import (
 )
 
 var testCasePrivateKey = []struct {
+	name   string
 	keyPath string
 	expect  *ecdsa.PrivateKey
 }{
 	{
+		name:   "test",
 		keyPath: "./default_ca/test_key.pem",
 	},
 }
 
 func TestCreatePrivateKey(t *testing.T) {
 	for _, testCase := range testCasePrivateKey {
-		t.Run(testCase.keyPath, func(t *testing.T) {
+		t.Run(testCase.name, func(t *testing.T) {
 			privateKey, err := CreatePrivateKey(testCase.keyPath)
 			if err != nil {
 				t.Fatalf("TestCreatePrivateKey: %v", err)
