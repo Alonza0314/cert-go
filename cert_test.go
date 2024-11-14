@@ -42,7 +42,7 @@ func TestSignCertificate(t *testing.T) {
 	var err error
 	for _, testCase := range testCaseCert {
 		t.Run(testCase.yamlPath, func(t *testing.T) {
-			logger.Info("TestCase: " + testCase.name)
+			logger.Info("TestCaseSignCertificate", testCase.name)
 			switch testCase.name {
 			case "root":
 				testCase.expect, err = SignRootCertificate(testCase.yamlPath)

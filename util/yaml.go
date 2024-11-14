@@ -10,7 +10,7 @@ import (
 func ReadYamlFile(filePath string) (map[string]interface{}, error) {
 	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
-		logger.Error("ReadYamlFile: " + err.Error())
+		logger.Error("ReadYamlFile", err.Error())
 		return nil, err
 	}
 
@@ -18,7 +18,7 @@ func ReadYamlFile(filePath string) (map[string]interface{}, error) {
 
 	err = yaml.Unmarshal(yamlFile, &data)
 	if err != nil {
-		logger.Error("ReadYamlFile: " + err.Error())
+		logger.Error("ReadYamlFile", err.Error())
 		return nil, err
 	}
 
@@ -28,13 +28,13 @@ func ReadYamlFile(filePath string) (map[string]interface{}, error) {
 func ReadYamlFileToStruct(filePath string, v interface{}) error {
 	yamlFile, err := os.ReadFile(filePath)
 	if err != nil {
-		logger.Error("ReadYamlFile: " + err.Error())
+		logger.Error("ReadYamlFile", err.Error())
 		return err
 	}
 
 	err = yaml.Unmarshal(yamlFile, v)
 	if err != nil {
-		logger.Error("ReadYamlFileToStruct: " + err.Error())
+		logger.Error("ReadYamlFileToStruct", err.Error())
 		return err
 	}
 
