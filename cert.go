@@ -116,6 +116,15 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 		return nil, err
 	}
 
+	// create directory exists
+	if !util.FileDirExists(cfg.CertFilePath) {
+		logger.Warn("signCertificate", util.FileDir(cfg.CertFilePath)+" directory not exists, creating...")
+		if err := util.FileDirCreate(cfg.CertFilePath); err != nil {
+			return nil, err
+		}
+		logger.Info("signCertificate", util.FileDir(cfg.CertFilePath)+" directory created")
+	}
+
 	logger.Info("signCertificate", cfg.Type+" certificate signed")
 	return certPEM, nil
 }

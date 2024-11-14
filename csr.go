@@ -54,6 +54,15 @@ func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
 		Bytes: csrBytes,
 	})
 
+	// create directory exists
+	if !util.FileDirExists(cfg.CsrFilePath) {
+		logger.Warn("CreateCsr", util.FileDir(cfg.CsrFilePath)+" directory not exists, creating...")
+		if err := util.FileDirCreate(cfg.CsrFilePath); err != nil {
+			return nil, err
+		}
+		logger.Info("CreateCsr", util.FileDir(cfg.CsrFilePath)+" directory created")
+	}
+
 	// save csr
 	if err := util.FileWrite(cfg.CsrFilePath, csrPEM, 0644); err != nil {
 		return nil, err

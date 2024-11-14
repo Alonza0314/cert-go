@@ -31,6 +31,15 @@ func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
 		Bytes: keyBytes,
 	})
 
+	// check directory exists
+	if !util.FileDirExists(keyPath) {
+		logger.Warn("CreatePrivateKey", util.FileDir(keyPath)+" directory not exists, creating...")
+		if err := util.FileDirCreate(keyPath); err != nil {
+			return nil, err
+		}
+		logger.Info("CreatePrivateKey", util.FileDir(keyPath)+" directory created")
+	}
+
 	// save private key
 	if err := util.FileWrite(keyPath, keyPEM, 0644); err != nil {
 		return nil, err
