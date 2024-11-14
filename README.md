@@ -92,6 +92,22 @@ mkdir -p ./default_ca/root ./default_ca/intermediate ./default_ca/server ./defau
 go test ./... -v
 ```
 
+## Command Line Tool
+
+### Build by Yourself(in root directory)
+
+```bash
+./build_cmd.sh
+```
+
+Then, you can find the executable file in the [build](./build) directory.
+
+### Use Directly
+
+TBA
+
+[Click here to see the command line tool in detail](./cmd/)
+
 ## About Me
 
 [Click here to know more about me](https://alonza0314.github.io/)
