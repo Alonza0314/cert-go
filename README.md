@@ -69,8 +69,8 @@ gantt
 
     The return value is the csr in `*x509.CertificateRequest` type.
 
-    >[!NOTE]
-    >If the private key is not existed, the function will automatically create one in default.
+    NOTICE:
+    - If the private key is not existed, the function will automatically create one in default.
 
 6. For sign certificate, you need to specify the yaml file path of the CA configuration. Then, use these functions for different types of certificates:
 
@@ -83,8 +83,9 @@ gantt
 
     The return value is the signed certificate in `[]byte` type after encoding to PEM format.
 
-    >[!NOTE]
-    >If the private key and csr are not existed, the function will automatically create one in default.
+    NOTICE:
+    - If the private key is not existed, the function will automatically create one in default.
+    - If the csr is not existed, the function will automatically create one in default.
 
 7. In the end, it is expected to see the private key, certificate, and csr in the destination directory.
 
