@@ -4,13 +4,13 @@
 
 In this example, we will create a private key and save it to the `./private_key.pem` file.
 
-[Click here to see the example](./create_privateKey/)
+[Click here to see the example](./privateKey/)
 
 ## Create Csr
 
 In this example, we will create a csr and save it to the `./csr.pem` file. Before creating the csr, we need to prepare the configuration file `./createCsrCfg.yml`.
 
-[Click here to see the example](./create_csr/)
+[Click here to see the example](./csr/)
 
 ## Sign Certificate
 
@@ -25,4 +25,4 @@ SignServerCertificate(yamlPath string) ([]byte, error)
 SignClientCertificate(yamlPath string) ([]byte, error)
 ```
 
-[Click here to see the example](./sign_cert/)
+[Click here to see the example](./cert/)
