@@ -8,9 +8,9 @@ import (
 var signCertYmlPath = "./signCertCfg.yml"
 
 func main() {
-	logger.Info("Sign root certificate")
+	logger.Info("SignRootCertificate", "signing root certificate")
 
 	certgo.SignRootCertificate(signCertYmlPath)
 
-	logger.Info("Root certificate signed, you can see the root certificate in ./root_cert.pem")
+	logger.Info("SignRootCertificate", "root certificate signed, you can see the root certificate in ./root_cert.pem")
 }

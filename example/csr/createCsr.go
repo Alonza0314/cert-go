@@ -15,10 +15,10 @@ func main() {
 		return
 	}
 
-	logger.Info("Create csr")
+	logger.Info("CreateCsr", "creating csr")
 	if _, err := certgo.CreateCsr(cfg.CA.Intermediate); err != nil {
 		return
 	}
 
-	logger.Info("Csr created, you can see the csr in ./intermediate_csr.pem")
+	logger.Info("CreateCsr", "csr created, you can see the csr in ./intermediate_csr.pem")
 }

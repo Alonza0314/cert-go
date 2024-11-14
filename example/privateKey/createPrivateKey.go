@@ -8,11 +8,11 @@ import (
 var privateKeyPath = "./private_key.pem"
 
 func main() {
-	logger.Info("Create private key")
+	logger.Info("CreatePrivateKey", "creating private key")
 
 	if _, err := certgo.CreatePrivateKey(privateKeyPath); err != nil {
 		return
 	}
 
-	logger.Info("Private key created, you can see the private key in " + privateKeyPath)
+	logger.Info("CreatePrivateKey", "private key created, you can see the private key in "+privateKeyPath)
 }
