@@ -1,4 +1,5 @@
 default_ca/
+build/
 
 *.pem
 *.csr
