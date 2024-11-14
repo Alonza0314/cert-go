@@ -14,6 +14,8 @@ import (
 )
 
 func signCertificate(cfg model.Certificate) ([]byte, error) {
+	logger.Info("signCertificate", "signing certificate")
+
 	// create certificate template
 	var template *x509.Certificate
 	serialNumber, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), 128))
@@ -62,7 +64,6 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 			logger.Error("signCertificate", err.Error())
 			return nil, err
 		}
-		logger.Info("signCertificate", "root certificate created")
 	} else {
 		// intermediate certificate or end-entity certificate
 		var csr *x509.CertificateRequest
@@ -103,7 +104,6 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 			logger.Error("signCertificate", err.Error())
 			return nil, err
 		}
-		logger.Info("signCertificate", "intermediate certificate created")
 	}
 
 	// encode certificate to PEM
@@ -116,6 +116,7 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 		return nil, err
 	}
 
+	logger.Info("signCertificate", cfg.Type+" certificate signed")
 	return certPEM, nil
 }
 
