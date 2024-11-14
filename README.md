@@ -90,4 +90,4 @@ go test ./... -v
 
 ## About Me
 
-[Click here to see my website](https://alonza0314.github.io/)
+[Click here to know more about me](https://alonza0314.github.io/)
