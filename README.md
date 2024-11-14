@@ -107,7 +107,7 @@ go test ./... -v
 ./build_cmd.sh
 ```
 
-Then, you can find the executable file in the [build](./build) directory.
+Then, you can find the executable file in the `build` directory.
 
 ### Use Directly
 
