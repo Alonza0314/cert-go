@@ -26,7 +26,7 @@ func FileDir(filePath string) string {
 }
 
 func FileDirCreate(filePath string) error {
-	err := os.MkdirAll(filepath.Dir(filePath), 0755)
+	err := os.MkdirAll(filepath.Dir(filePath), 0775)
 	if err != nil {
 		logger.Error("FileDirCreate", err.Error())
 	}
