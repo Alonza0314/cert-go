@@ -111,9 +111,13 @@ Then, you can find the executable file in the `build` directory.
 
 ### Use Directly
 
-TBA
+You can download the binary file from the release page and execute it directly.
 
-[Click here to see the command line tool in detail](./cmd/)
+[Go to the release page to download the binary file](https://github.com/Alonza0314/cert-go/releases)
+
+### Command Line Tool Usage
+
+[Click here to see the command line tool usage in detail](./cmd/README.md)
 
 ## About Me
 
