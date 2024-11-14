@@ -8,7 +8,7 @@ Also, we expected to link third party CA certificates to generate certificates i
 
 ```mermaid
 gantt
-    title cert-go
+    title 2024
     dateFormat MM-DD
         axisFormat %m-%d
 
@@ -20,7 +20,11 @@ gantt
 
     section v2.0.0
     cobra cmd: active, cobra-cmd, 11-14, 2d
-    test: done, test, 11-15, 3d
+    test: done, test, 11-15, 1d
+    Release: milestone, after test
+
+    section v2.x.x
+    TBA: active, TBA, 11-16, 2d
 
     section v3.0.0
     third party: crit, third-party, 11-18, 1d
