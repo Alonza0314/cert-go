@@ -1,0 +1,8 @@
+ca:
+  intermediate:
+    type: intermediate
+    private_key: ./intermediate_key.pem
+    csr: ./intermediate_csr.pem
+    is_ca: true
+    organization: "default_ca"
+    common_name: "default_ca"

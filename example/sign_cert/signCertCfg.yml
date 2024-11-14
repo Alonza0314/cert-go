@@ -1,0 +1,12 @@
+ca:
+  root:
+    type: root
+    cert: ./root_cert.pem
+    private_key: ./root_key.pem
+    csr: ./root_csr.pem
+    is_ca: true
+    organization: "default_ca"
+    common_name: "default_ca"
+    validity_years: 10
+    validity_month: 0
+    validity_day: 0
