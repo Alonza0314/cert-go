@@ -6,6 +6,8 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"math/big"
+	"net"
+	"net/url"
 	"time"
 
 	"github.com/Alonza0314/cert-go/logger"
@@ -39,6 +41,21 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 		ExtKeyUsage:           cfg.ExtKeyUsage,
 		BasicConstraintsValid: true,
 		IsCA:                  cfg.IsCA,
+		DNSNames:              cfg.DNSNames,
+		IPAddresses:           func() []net.IP {
+			ips := make([]net.IP, 0)
+			for _, ip := range cfg.IPAddresses {
+				ips = append(ips, net.ParseIP(ip))
+			}
+			return ips
+		}(),
+		URIs: func() []*url.URL {
+			uris := make([]*url.URL, 0)
+			for _, uri := range cfg.URIs {
+				uris = append(uris, &url.URL{Host: uri})
+			}
+			return uris
+		}(),
 	}
 
 	var certBytes []byte

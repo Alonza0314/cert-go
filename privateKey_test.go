@@ -14,7 +14,7 @@ var testCasePrivateKey = []struct {
 }{
 	{
 		name:   "test",
-		keyPath: "./default_ca/test_key.pem",
+		keyPath: "./default_ca/test.key.pem",
 	},
 }
 

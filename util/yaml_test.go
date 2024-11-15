@@ -7,90 +7,21 @@ import (
 	"github.com/Alonza0314/cert-go/model"
 )
 
-var testCaseMap = []struct {
-	name     string
-	filePath string
-	expect   map[string]interface{}
-}{
-	{
-		name:     "default",
-		filePath: "../defaultCfg.yml",
-		expect: map[string]interface{}{
-			"ca": map[string]interface{}{
-				"root": map[string]interface{}{
-					"type":           "root",
-					"cert":           "./default_ca/root/root_cert.pem",
-					"private_key":    "./default_ca/root/root_key.pem",
-					"csr":            "./default_ca/root/root_csr.pem",
-					"is_ca":          true,
-					"organization":   "default_ca",
-					"common_name":    "default_ca",
-					"validity_years": 10,
-					"validity_month": 0,
-					"validity_day":   0,
-				},
-				"intermediate": map[string]interface{}{
-					"type":           "intermediate",
-					"cert":           "./default_ca/intermediate/intermediate_cert.pem",
-					"private_key":    "./default_ca/intermediate/intermediate_key.pem",
-					"csr":            "./default_ca/intermediate/intermediate_csr.pem",
-					"parent_cert":    "./default_ca/root/root_cert.pem",
-					"parent_key":     "./default_ca/root/root_key.pem",
-					"is_ca":          true,
-					"organization":   "default_ca",
-					"common_name":    "default_ca",
-					"validity_years": 10,
-					"validity_month": 0,
-					"validity_day":   0,
-				},
-				"server": map[string]interface{}{
-					"type":           "server",
-					"cert":           "./default_ca/server/server_cert.pem",
-					"private_key":    "./default_ca/server/server_key.pem",
-					"csr":            "./default_ca/server/server_csr.pem",
-					"parent_cert":    "./default_ca/intermediate/intermediate_cert.pem",
-					"parent_key":     "./default_ca/intermediate/intermediate_key.pem",
-					"is_ca":          false,
-					"organization":   "default_ca",
-					"common_name":    "default_ca",
-					"validity_years": 10,
-					"validity_month": 0,
-					"validity_day":   0,
-				},
-				"client": map[string]interface{}{
-					"type":           "client",
-					"cert":           "./default_ca/client/client_cert.pem",
-					"private_key":    "./default_ca/client/client_key.pem",
-					"csr":            "./default_ca/client/client_csr.pem",
-					"parent_cert":    "./default_ca/intermediate/intermediate_cert.pem",
-					"parent_key":     "./default_ca/intermediate/intermediate_key.pem",
-					"is_ca":          false,
-					"organization":   "default_ca",
-					"common_name":    "default_ca",
-					"validity_years": 10,
-					"validity_month": 0,
-					"validity_day":   0,
-				},
-			},
-		},
-	},
-}
-
 var testCaseStruct = []struct {
 	name     string
 	filePath string
 	expect   model.CAConfig
 }{
 	{
-		name:     "default",
+		name:     "testStruct",
 		filePath: "../defaultCfg.yml",
 		expect: model.CAConfig{
 			CA: model.CertificateAuthority{
 				Root: model.Certificate{
 					Type:          "root",
-					CertFilePath:  "./default_ca/root/root_cert.pem",
-					KeyFilePath:   "./default_ca/root/root_key.pem",
-					CsrFilePath:   "./default_ca/root/root_csr.pem",
+					CertFilePath:  "./default_ca/root/root.cert.pem",
+					KeyFilePath:   "./default_ca/root/root.key.pem",
+					CsrFilePath:   "./default_ca/root/root.csr.pem",
 					IsCA:          true,
 					Organization:  "default_ca",
 					CommonName:    "default_ca",
@@ -99,12 +30,12 @@ var testCaseStruct = []struct {
 					ValidityDay:   0,
 				},
 				Intermediate: model.Certificate{
-					Type:          "intermediate",
-					CertFilePath:  "./default_ca/intermediate/intermediate_cert.pem",
-					KeyFilePath:   "./default_ca/intermediate/intermediate_key.pem",
-					CsrFilePath:   "./default_ca/intermediate/intermediate_csr.pem",
-					ParentCertPath: "./default_ca/root/root_cert.pem",
-					ParentKeyPath:  "./default_ca/root/root_key.pem",
+					Type:           "intermediate",
+					CertFilePath:   "./default_ca/intermediate/intermediate.cert.pem",
+					KeyFilePath:    "./default_ca/intermediate/intermediate.key.pem",
+					CsrFilePath:    "./default_ca/intermediate/intermediate.csr.pem",
+					ParentCertPath: "./default_ca/root/root.cert.pem",
+					ParentKeyPath:  "./default_ca/root/root.key.pem",
 					IsCA:           true,
 					Organization:   "default_ca",
 					CommonName:     "default_ca",
@@ -113,50 +44,40 @@ var testCaseStruct = []struct {
 					ValidityDay:    0,
 				},
 				Server: model.Certificate{
-					Type:          "server",
-					CertFilePath:  "./default_ca/server/server_cert.pem",
-					KeyFilePath:   "./default_ca/server/server_key.pem",
-					CsrFilePath:   "./default_ca/server/server_csr.pem",
-					ParentCertPath: "./default_ca/intermediate/intermediate_cert.pem",
-					ParentKeyPath:  "./default_ca/intermediate/intermediate_key.pem",
+					Type:           "server",
+					CertFilePath:   "./default_ca/server/server.cert.pem",
+					KeyFilePath:    "./default_ca/server/server.key.pem",
+					CsrFilePath:    "./default_ca/server/server.csr.pem",
+					ParentCertPath: "./default_ca/intermediate/intermediate.cert.pem",
+					ParentKeyPath:  "./default_ca/intermediate/intermediate.key.pem",
 					IsCA:           false,
 					Organization:   "default_ca",
 					CommonName:     "default_ca",
 					ValidityYears:  10,
 					ValidityMonth:  0,
 					ValidityDay:    0,
+					DNSNames:       []string{"localhost"},
+					IPAddresses:    []string{"127.0.0.1", "0.0.0.0"},
 				},
 				Client: model.Certificate{
-					Type:          "client",
-					CertFilePath:  "./default_ca/client/client_cert.pem",
-					KeyFilePath:    "./default_ca/client/client_key.pem",
-					CsrFilePath:    "./default_ca/client/client_csr.pem",
-					ParentCertPath: "./default_ca/intermediate/intermediate_cert.pem",
-					ParentKeyPath:  "./default_ca/intermediate/intermediate_key.pem",
+					Type:           "client",
+					CertFilePath:   "./default_ca/client/client.cert.pem",
+					KeyFilePath:    "./default_ca/client/client.key.pem",
+					CsrFilePath:    "./default_ca/client/client.csr.pem",
+					ParentCertPath: "./default_ca/intermediate/intermediate.cert.pem",
+					ParentKeyPath:  "./default_ca/intermediate/intermediate.key.pem",
 					IsCA:           false,
 					Organization:   "default_ca",
 					CommonName:     "default_ca",
 					ValidityYears:  10,
 					ValidityMonth:  0,
 					ValidityDay:    0,
+					DNSNames:       []string{"localhost"},
+					IPAddresses:    []string{"127.0.0.1", "0.0.0.0"},
 				},
 			},
 		},
 	},
-}
-
-func TestReadYamlFile(t *testing.T) {
-	for _, testCase := range testCaseMap {
-		t.Run(testCase.name, func(t *testing.T) {
-			data, err := ReadYamlFile(testCase.filePath)
-			if err != nil {
-				t.Errorf("TestReadYamlFile: %v", err)
-			}
-			if !reflect.DeepEqual(data, testCase.expect) {
-				t.Errorf("TestReadYamlFile: actual %v != expect %v", data, testCase.expect)
-			}
-		})
-	}
 }
 
 func TestReadYamlFileToStruct(t *testing.T) {

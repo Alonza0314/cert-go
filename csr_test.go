@@ -17,8 +17,8 @@ var testCaseCsr = []struct {
 	{
 		name: "test",
 		cfg: model.Certificate{
-			KeyFilePath: "./default_ca/test_key.pem",
-			CsrFilePath: "./default_ca/test_csr.pem",
+			KeyFilePath: "./default_ca/test.key.pem",
+			CsrFilePath: "./default_ca/test.csr.pem",
 		},
 	},
 }
