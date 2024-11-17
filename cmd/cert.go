@@ -25,21 +25,21 @@ func init() {
 func createCert(cmd *cobra.Command, args []string) {
 	yamlPath, err := cmd.Flags().GetString("yaml")
 	if err != nil {
-		logger.Error("CMD", err.Error())
+		logger.Error("cert-go", err.Error())
 		return
 	}
 	certType, err := cmd.Flags().GetString("type")
 	if err != nil {
-		logger.Error("CMD", err.Error())
+		logger.Error("cert-go", err.Error())
 		return
 	}
 
 	if certType != "root" && certType != "intermediate" && certType != "server" && certType != "client" {
-		logger.Error("CMD", "invalid cert type, please specify the type of the certificate: [root, intermediate, server, client]")
+		logger.Error("cert-go", "invalid cert type, please specify the type of the certificate: [root, intermediate, server, client]")
 		return
 	}
 
-	logger.Info("CMD", "start to create cert")
+	logger.Info("cert-go", "start to create cert")
 	switch certType {
 	case "root":
 		_, err = certgo.SignRootCertificate(yamlPath)
@@ -51,8 +51,8 @@ func createCert(cmd *cobra.Command, args []string) {
 		_, err = certgo.SignClientCertificate(yamlPath)
 	}
 	if err != nil {
-		logger.Error("CMD", "failed to create cert")
+		logger.Error("cert-go", "failed to create cert")
 		return
 	}
-	logger.Info("CMD", "create cert success")
+	logger.Info("cert-go", "create cert success")
 }

@@ -23,14 +23,14 @@ func init() {
 func createPrivateKey(cmd *cobra.Command, args []string) {
 	outputPath, err := cmd.Flags().GetString("out")
 	if err != nil {
-		logger.Error("CMD", err.Error())
+		logger.Error("cert-go", err.Error())
 		return
 	}
 
-	logger.Info("CMD", "start to create private key")
+	logger.Info("cert-go", "start to create private key")
 	if _, err := certgo.CreatePrivateKey(outputPath); err != nil {
-		logger.Error("CMD", "failed to create private key")
+		logger.Error("cert-go", "failed to create private key")
 		return
 	}
-	logger.Info("CMD", "create private key success")
+	logger.Info("cert-go", "create private key success")
 }

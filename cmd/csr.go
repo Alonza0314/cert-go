@@ -27,24 +27,24 @@ func init() {
 func createCsr(cmd *cobra.Command, args []string) {
 	yamlPath, err := cmd.Flags().GetString("yaml")
 	if err != nil {
-		logger.Error("CMD", err.Error())
+		logger.Error("cert-go", err.Error())
 		return
 	}
 	csrType, err := cmd.Flags().GetString("type")
 	if err != nil {
-		logger.Error("CMD", err.Error())
+		logger.Error("cert-go", err.Error())
 		return
 	}
 
 	if csrType != "intermediate" && csrType != "server" && csrType != "client" {
-		logger.Error("CMD", "invalid csr type, please specify the type of the certificate: [intermediate, server, client]")
+		logger.Error("cert-go", "invalid csr type, please specify the type of the certificate: [intermediate, server, client]")
 		return
 	}
 
-	logger.Info("CMD", "start to create csr")
+	logger.Info("cert-go", "start to create csr")
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
-		logger.Error("CMD", "failed to create csr")
+		logger.Error("cert-go", "failed to create csr")
 		return
 	}
 	switch csrType {
@@ -56,8 +56,8 @@ func createCsr(cmd *cobra.Command, args []string) {
 		_, err = certgo.CreateCsr(cfg.CA.Client)
 	}
 	if err != nil {
-		logger.Error("CMD", "failed to create csr")
+		logger.Error("cert-go", "failed to create csr")
 		return
 	}
-	logger.Info("CMD", "create csr success")
+	logger.Info("cert-go", "create csr success")
 }
