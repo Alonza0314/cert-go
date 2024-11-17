@@ -2,7 +2,6 @@ package certgo
 
 import (
 	"crypto/x509"
-	"encoding/pem"
 	"reflect"
 	"testing"
 
@@ -13,7 +12,7 @@ var testCaseCert = []struct {
 	name     string
 	yamlPath string
 	certPath string
-	expect   []byte
+	expect   *x509.Certificate
 }{
 	{
 		name:     "root",
@@ -59,17 +58,9 @@ func TestSignCertificate(t *testing.T) {
 			if err != nil {
 				t.Fatalf("TestSignRootCertificate: %v", err)
 			}
-			// parse expect to x509.Certificate
-			block, _ := pem.Decode(testCase.expect)
-			if block == nil {
-				t.Fatalf("TestSignRootCertificate: failed to decode PEM block")
-			}
-			expectCert, err := x509.ParseCertificate(block.Bytes)
-			if err != nil {
-				t.Fatalf("TestSignRootCertificate: %v", err)
-			}
-			if !reflect.DeepEqual(expectCert, readCert) {
-				t.Fatalf("TestSignRootCertificate: expect %v, but got %v", expectCert, readCert)
+
+			if !reflect.DeepEqual(testCase.expect, readCert) {
+				t.Fatalf("TestSignRootCertificate: expect %v, but got %v", testCase.expect, readCert)
 			}
 		})
 	}

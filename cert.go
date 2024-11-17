@@ -15,7 +15,7 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-func signCertificate(cfg model.Certificate) ([]byte, error) {
+func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
 	// create certificate template
@@ -143,53 +143,59 @@ func signCertificate(cfg model.Certificate) ([]byte, error) {
 	}
 
 	logger.Info("signCertificate", cfg.Type+" certificate signed")
-	return certPEM, nil
+
+	cert, err := x509.ParseCertificate(certBytes)
+	if err != nil {
+		logger.Error("signCertificate", err.Error())
+		return nil, err
+	}
+	return cert, nil
 }
 
-func SignRootCertificate(yamlPath string) ([]byte, error) {
+func SignRootCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	certBytes, err := signCertificate(cfg.CA.Root)
+	cert, err := signCertificate(cfg.CA.Root)
 	if err != nil {
 		return nil, err
 	}
-	return certBytes, nil
+	return cert, nil
 }
 
-func SignIntermediateCertificate(yamlPath string) ([]byte, error) {
+func SignIntermediateCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	certBytes, err := signCertificate(cfg.CA.Intermediate)
+	cert, err := signCertificate(cfg.CA.Intermediate)
 	if err != nil {
 		return nil, err
 	}
-	return certBytes, nil
+	return cert, nil
 }
 
-func SignServerCertificate(yamlPath string) ([]byte, error) {
+func SignServerCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	certBytes, err := signCertificate(cfg.CA.Server)
+	cert, err := signCertificate(cfg.CA.Server)
 	if err != nil {
 		return nil, err
 	}
-	return certBytes, nil
+	return cert, nil
 }
 
-func SignClientCertificate(yamlPath string) ([]byte, error) {
+func SignClientCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	certBytes, err := signCertificate(cfg.CA.Client)
+	cert, err := signCertificate(cfg.CA.Client)
 	if err != nil {
 		return nil, err
 	}
-	return certBytes, nil
+	return cert, nil
 }
