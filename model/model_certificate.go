@@ -5,17 +5,6 @@ import (
 	"crypto/x509"
 )
 
-type CAConfig struct {
-	CA CertificateAuthority `yaml:"ca"`
-}
-
-type CertificateAuthority struct {
-	Root         Certificate `yaml:"root"`
-	Intermediate Certificate `yaml:"intermediate"`
-	Server       Certificate `yaml:"server"`
-	Client       Certificate `yaml:"client"`
-}
-
 type Certificate struct {
 	Type         string `yaml:"type"`
 	CertFilePath string `yaml:"cert"`
