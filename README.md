@@ -23,11 +23,8 @@ gantt
     test: done, test, 11-14, 2d
     Release: milestone, after test
 
-    section v2.x.x
-    TBA: active, TBA, 11-16, 2d
-
     section v3.0.0
-    third party: crit, third-party, 11-18, 1d
+    TBA: crit, TBA, 11-16, 2d
 ```
 
 ## Develop Environment
@@ -79,13 +76,13 @@ gantt
 6. For sign certificate, you need to specify the yaml file path of the CA configuration. Then, use these functions for different types of certificates:
 
     ```go
-    SignRootCertificate(yamlPath string) ([]byte, error)
-    SignIntermediateCertificate(yamlPath string) ([]byte, error)
-    SignServerCertificate(yamlPath string) ([]byte, error)
-    SignClientCertificate(yamlPath string) ([]byte, error)
+    SignRootCertificate(yamlPath string) (*x509.Certificate, error)
+    SignIntermediateCertificate(yamlPath string) (*x509.Certificate, error)
+    SignServerCertificate(yamlPath string) (*x509.Certificate, error)
+    SignClientCertificate(yamlPath string) (*x509.Certificate, error)
     ```
 
-    The return value is the signed certificate in `[]byte` type after encoding to PEM format.
+    The return value is the signed certificate in `*x509.Certificate` type.
 
     NOTICE:
     - If the private key is not existed, the function will automatically create one in default.
