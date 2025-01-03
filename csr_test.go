@@ -62,4 +62,14 @@ func TestCreateCsr(t *testing.T) {
 			}
 		})
 	}
+	for _, testCase := range testCaseCsr {
+		if !testCase.exist {
+			if err := util.FileDelete(testCase.cfg.KeyFilePath); err != nil {
+				t.Fatalf("TestCreateCsr: %v", err)
+			}
+			if err := util.FileDelete(testCase.cfg.CsrFilePath); err != nil {
+				t.Fatalf("TestCreateCsr: %v", err)
+			}
+		}
+	}
 }

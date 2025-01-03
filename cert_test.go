@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
 )
 
@@ -102,5 +103,52 @@ func TestSignCertificate(t *testing.T) {
 				}
 			}
 		})
+	}
+	for _, testCase := range testCaseCert {
+		if !testCase.exist {
+			var cfg model.CAConfig
+			if err := util.ReadYamlFileToStruct(testCase.yamlPath, &cfg); err != nil {
+				t.Fatalf("TestSignCertificate: %v", err)
+			}
+			switch testCase.name {
+			case "root without exist":
+				if err := util.FileDelete(cfg.CA.Root.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Root.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+			case "intermediate without exist":
+				if err := util.FileDelete(cfg.CA.Intermediate.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Intermediate.CsrFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Intermediate.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+			case "server without exist":
+				if err := util.FileDelete(cfg.CA.Server.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Server.CsrFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Server.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+			case "client without exist":
+				if err := util.FileDelete(cfg.CA.Client.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Client.CsrFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Client.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificate: %v", err)
+				}
+			}
+		}
 	}
 }

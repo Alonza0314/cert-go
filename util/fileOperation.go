@@ -21,6 +21,14 @@ func FileWrite(filePath string, data []byte, code fs.FileMode) error {
 	return err
 }
 
+func FileDelete(filePath string) error {
+	err := os.Remove(filePath)
+	if err != nil {
+		logger.Error("FileDelete", err.Error())
+	}
+	return err
+}
+
 func FileDir(filePath string) string {
 	return filepath.Dir(filePath)
 }
