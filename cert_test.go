@@ -12,27 +12,56 @@ var testCaseCert = []struct {
 	name     string
 	yamlPath string
 	certPath string
+	exist    bool
 	expect   *x509.Certificate
 }{
 	{
-		name:     "root",
+		name:     "root without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/root/root.cert.pem",
+		exist:    false,
 	},
 	{
-		name:     "intermediate",
+		name:     "root with exist",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/root/root.cert.pem",
+		exist:    true,
+	},
+	{
+		name:     "intermediate without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/intermediate/intermediate.cert.pem",
+		exist:    false,
 	},
 	{
-		name:     "server",
+		name:     "intermediate with exist",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/intermediate/intermediate.cert.pem",
+		exist:    true,
+	},
+	{
+		name:     "server without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/server/server.cert.pem",
+		exist:    false,
 	},
 	{
-		name:     "client",
+		name:     "server with exist",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/server/server.cert.pem",
+		exist:    true,
+	},
+	{
+		name:     "client without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/client/client.cert.pem",
+		exist:    false,
+	},
+	{
+		name:     "client with exist",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/client/client.cert.pem",
+		exist:    true,
 	},
 }
 
@@ -41,26 +70,36 @@ func TestSignCertificate(t *testing.T) {
 	for _, testCase := range testCaseCert {
 		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
-			case "root":
+			case "root without exist", "root with exist":
 				testCase.expect, err = SignRootCertificate(testCase.yamlPath)
-			case "intermediate":
+			case "intermediate without exist", "intermediate with exist":
 				testCase.expect, err = SignIntermediateCertificate(testCase.yamlPath)
-			case "server":
+			case "server without exist", "server with exist":
 				testCase.expect, err = SignServerCertificate(testCase.yamlPath)
-			case "client":
+			case "client without exist", "client with exist":
 				testCase.expect, err = SignClientCertificate(testCase.yamlPath)
 			}
-			if err != nil {
-				t.Fatalf("TestSignRootCertificate: %v", err)
-			}
-
-			readCert, err := util.ReadCertificate(testCase.certPath)
-			if err != nil {
-				t.Fatalf("TestSignRootCertificate: %v", err)
-			}
-
-			if !reflect.DeepEqual(testCase.expect, readCert) {
-				t.Fatalf("TestSignRootCertificate: expect %v, but got %v", testCase.expect, readCert)
+			if testCase.exist {
+				if err == nil || err.Error() != "certificate already exists" {
+					t.Fatalf("TestSignRootCertificate: certificate should exist")
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("TestSignRootCertificate: %v", err)
+				}
+				if testCase.expect == nil {
+					t.Fatalf("TestSignRootCertificate: certificate is nil")
+				}
+				readCert, err := util.ReadCertificate(testCase.certPath)
+				if err != nil {
+					t.Fatalf("TestSignRootCertificate: %v", err)
+				}
+				if readCert == nil {
+					t.Fatalf("TestSignRootCertificate: read certificate is nil")
+				}
+				if !reflect.DeepEqual(testCase.expect, readCert) {
+					t.Fatalf("TestSignRootCertificate: certificate is not equal")
+				}
 			}
 		})
 	}
