@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 
 	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/model"
@@ -14,6 +15,12 @@ import (
 
 func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
 	logger.Info("CreateCsr", "creating csr")
+
+	// check csr exists
+	if util.FileExists(cfg.CsrFilePath) {
+		logger.Warn("CreateCsr", "csr already exists")
+		return nil, errors.New("csr already exists")
+	}
 
 	var privateKey *ecdsa.PrivateKey
 	var err error
