@@ -2,7 +2,7 @@ package main
 
 import (
 	certgo "github.com/Alonza0314/cert-go"
-	"github.com/Alonza0314/cert-go/logger"
+	logger "github.com/Alonza0314/logger-go"
 )
 
 var signCertYmlPath = "./signCertCfg.yml"

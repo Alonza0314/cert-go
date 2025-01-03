@@ -11,9 +11,9 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
+	logger "github.com/Alonza0314/logger-go"
 )
 
 func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {

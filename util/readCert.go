@@ -6,7 +6,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/Alonza0314/cert-go/logger"
+	logger "github.com/Alonza0314/logger-go"
 )
 
 func ReadCertificate(certPath string) (*x509.Certificate, error) {
