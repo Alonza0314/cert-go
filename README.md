@@ -36,6 +36,9 @@ gantt
 
 ## Usage
 
+> [!NOTE]
+> If the target file (certificate, csr, private key) is existed, the function will not create it and directly return an error, cert/csr/private key already exists.
+
 1. Prepare the destination directory for the private key, certificate, and CSR. This step is required for all the following steps.
 
 2. Modify the `cfg.yml` file to set the appropriate values(you can use the `defaultCfg.yml` file as your template).
