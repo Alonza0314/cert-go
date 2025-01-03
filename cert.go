@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 	"math/big"
 	"net"
 	"net/url"
@@ -17,6 +18,12 @@ import (
 
 func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
+
+	// check certificate exists
+	if util.FileExists(cfg.CertFilePath) {
+		logger.Warn("signCertificate", "certificate already exists")
+		return nil, errors.New("certificate already exists")
+	}
 
 	// create certificate template
 	var template *x509.Certificate
@@ -42,7 +49,7 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		BasicConstraintsValid: true,
 		IsCA:                  cfg.IsCA,
 		DNSNames:              cfg.DNSNames,
-		IPAddresses:           func() []net.IP {
+		IPAddresses: func() []net.IP {
 			ips := make([]net.IP, 0)
 			for _, ip := range cfg.IPAddresses {
 				ips = append(ips, net.ParseIP(ip))

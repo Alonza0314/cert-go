@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 
 	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/util"
@@ -13,6 +14,12 @@ import (
 
 func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
 	logger.Info("CreatePrivateKey", "creating private key")
+	// check if private key exists
+	if util.FileExists(keyPath) {
+		logger.Warn("CreatePrivateKey", "private key already exists")
+		return nil, errors.New("private key already exists")
+	}
+
 	// generate private key
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
