@@ -8,8 +8,8 @@ import (
 	"encoding/pem"
 	"errors"
 
-	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/util"
+	logger "github.com/Alonza0314/logger-go"
 )
 
 func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {

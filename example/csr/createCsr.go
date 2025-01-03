@@ -2,9 +2,9 @@ package main
 
 import (
 	certgo "github.com/Alonza0314/cert-go"
-	"github.com/Alonza0314/cert-go/logger"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
+	logger "github.com/Alonza0314/logger-go"
 )
 
 var createCsrYmlPath = "./createCsrCfg.yml"

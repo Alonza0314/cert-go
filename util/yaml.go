@@ -3,7 +3,7 @@ package util
 import (
 	"os"
 
-	"github.com/Alonza0314/cert-go/logger"
+	logger "github.com/Alonza0314/logger-go"
 	"gopkg.in/yaml.v3"
 )
 

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"os"
 
-	"github.com/Alonza0314/cert-go/logger"
+	logger "github.com/Alonza0314/logger-go"
 )
 
 func ReadCsr(csrPath string) (*x509.CertificateRequest, error) {
