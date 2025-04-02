@@ -10,7 +10,9 @@ var signCertYmlPath = "./signCertCfg.yml"
 func main() {
 	logger.Info("SignRootCertificate", "signing root certificate")
 
-	certgo.SignRootCertificate(signCertYmlPath)
+	if _, err := certgo.SignRootCertificate(signCertYmlPath); err != nil {
+		return
+	}
 
 	logger.Info("SignRootCertificate", "root certificate signed, you can see the root certificate in ./root_cert.pem")
 }
