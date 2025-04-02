@@ -15,7 +15,10 @@ var privateKeyCmd = &cobra.Command{
 
 func init() {
 	privateKeyCmd.Flags().StringP("out", "o", "", "specify the output path of the private key")
-	privateKeyCmd.MarkFlagRequired("output")
+
+	if err := privateKeyCmd.MarkFlagRequired("out"); err != nil {
+		logger.Error("cert-go", err.Error())
+	}
 
 	createCmd.AddCommand(privateKeyCmd)
 }
