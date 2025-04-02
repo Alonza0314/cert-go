@@ -3,7 +3,7 @@ module github.com/Alonza0314/cert-go
 go 1.22.5
 
 require (
-	github.com/Alonza0314/logger-go v1.0.0
+	github.com/Alonza0314/logger-go v1.2.2
 	github.com/spf13/cobra v1.8.1
 	gopkg.in/yaml.v3 v3.0.1
 )
