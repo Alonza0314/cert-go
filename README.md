@@ -84,9 +84,17 @@ go test ./... -v
 
 ### Build by Yourself(in root directory)
 
-```bash
-./build_cmd.sh
-```
+- linux-amd64
+
+  ```bash
+  make linux_amd64
+  ```
+
+- mac-arm64
+
+  ```bash
+  make mac_arm64
+  ```
 
 Then, you can find the executable file in the `build` directory.
 
