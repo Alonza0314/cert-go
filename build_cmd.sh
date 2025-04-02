@@ -28,12 +28,12 @@ main() {
 	case "$1" in
 		linux_amd64)
 			make_main
-			GOOS=linux GOARCH=amd64 go build -o ./build/cert-go ./main/main.go
+			GOOS=linux GOARCH=amd64 go build -o ./build/cert-go-linux-amd64 ./main/main.go
 			remove_main
 			;;
 		mac_arm64)
 			make_main
-			GOOS=darwin GOARCH=arm64 go build -o ./build/cert-go ./main/main.go
+			GOOS=darwin GOARCH=arm64 go build -o ./build/cert-go-mac-arm64 ./main/main.go
 			remove_main
 			;;
 		*)
