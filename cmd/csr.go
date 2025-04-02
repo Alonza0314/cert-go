@@ -18,8 +18,13 @@ var csrCmd = &cobra.Command{
 func init() {
 	csrCmd.Flags().StringP("yaml", "y", "", "specify the configuration yaml file path")
 	csrCmd.Flags().StringP("type", "t", "", "specify the type of the certificate: [intermediate, server, client]")
-	csrCmd.MarkFlagRequired("yaml")
-	csrCmd.MarkFlagRequired("type")
+
+	if err := csrCmd.MarkFlagRequired("yaml"); err != nil {
+		logger.Error("cert-go", err.Error())
+	}
+	if err := csrCmd.MarkFlagRequired("type"); err != nil {
+		logger.Error("cert-go", err.Error())
+	}
 
 	createCmd.AddCommand(csrCmd)
 }
