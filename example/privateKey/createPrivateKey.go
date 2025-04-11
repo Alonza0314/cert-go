@@ -6,11 +6,12 @@ import (
 )
 
 var privateKeyPath = "./private_key.pem"
+var force = true
 
 func main() {
 	logger.Info("CreatePrivateKey", "creating private key")
 
-	if _, err := certgo.CreatePrivateKey(privateKeyPath); err != nil {
+	if _, err := certgo.CreatePrivateKey(privateKeyPath, force); err != nil {
 		return
 	}
 

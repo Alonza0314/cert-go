@@ -60,9 +60,11 @@ func TestCreatePrivateKey(t *testing.T) {
 		})
 	}
 	for _, testCase := range testCasePrivateKey {
-		if !testCase.exist  || testCase.force{
-			if err := util.FileDelete(testCase.keyPath); err != nil {
-				t.Fatalf("TestCreatePrivateKey: %v", err)
+		if !testCase.exist || testCase.force {
+			if util.FileExists(testCase.keyPath) {
+				if err := util.FileDelete(testCase.keyPath); err != nil {
+					t.Fatalf("TestCreatePrivateKey (%s): failed to delete key: %v", testCase.name, err)
+				}
 			}
 		}
 	}

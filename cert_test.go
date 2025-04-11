@@ -107,6 +107,29 @@ func TestSignCertificate(t *testing.T) {
 	var err error
 	for _, testCase := range testCaseCert {
 		t.Run(testCase.name, func(t *testing.T) {
+			// if !testCase.exist {
+			// 	var cfg model.CAConfig
+			// 	if err := util.ReadYamlFileToStruct(testCase.yamlPath, &cfg); err != nil {
+			// 		t.Fatalf("TestSignCertificate (%s): failed to read yaml: %v", testCase.name, err)
+			// 	}
+			// 	switch testCase.name {
+			// 	case "root without exist":
+			// 		_ = util.FileDelete(cfg.CA.Root.CertFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Root.KeyFilePath)
+			// 	case "intermediate without exist":
+			// 		_ = util.FileDelete(cfg.CA.Intermediate.CertFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Intermediate.KeyFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Intermediate.CsrFilePath)
+			// 	case "server without exist":
+			// 		_ = util.FileDelete(cfg.CA.Server.CertFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Server.KeyFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Server.CsrFilePath)
+			// 	case "client without exist":
+			// 		_ = util.FileDelete(cfg.CA.Client.CertFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Client.KeyFilePath)
+			// 		_ = util.FileDelete(cfg.CA.Client.CsrFilePath)
+			// 	}
+			// }
 			switch testCase.name {
 			case "root without exist", "root with exist and no force", "root with exist and force":
 				testCase.expect, err = SignRootCertificate(testCase.yamlPath, testCase.force)

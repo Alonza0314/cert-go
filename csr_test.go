@@ -7,13 +7,9 @@ import (
 
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
-	"github.com/Alonza0314/cert-go"
+	// "github.com/Alonza0314/cert-go"
 )
 
-
-func TestDummy(t *testing.T) {
-	_ = certgo.CreateCsr // see if you can reference it
-}
 
 var testCaseCsr = []struct {
 	name   string
@@ -83,11 +79,15 @@ func TestCreateCsr(t *testing.T) {
 	}
 	for _, testCase := range testCaseCsr {
 		if !testCase.exist || testCase.force {
-			if err := util.FileDelete(testCase.cfg.KeyFilePath); err != nil {
-				t.Fatalf("TestCreateCsr: %v", err)
+			if util.FileExists(testCase.cfg.KeyFilePath) {
+				if err := util.FileDelete(testCase.cfg.KeyFilePath); err != nil {
+					t.Fatalf("TestCreateCsr (%s): failed to delete key: %v", testCase.name, err)
+				}
 			}
-			if err := util.FileDelete(testCase.cfg.CsrFilePath); err != nil {
-				t.Fatalf("TestCreateCsr: %v", err)
+			if util.FileExists(testCase.cfg.CsrFilePath) {
+				if err := util.FileDelete(testCase.cfg.CsrFilePath); err != nil {
+					t.Fatalf("TestCreateCsr (%s): failed to delete csr: %v", testCase.name, err)
+				}
 			}
 		}
 	}

@@ -21,15 +21,10 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
 	// check certificate exists
-	if !cfg.Force {
+	if !cfg.Force && util.FileExists(cfg.CertFilePath) {
 		// logger.Errorf("signCertificate", "certificate already exists at %s. Use --force to overwrite it", cfg.CertFilePath)
 		logger.Error("signCertificate", fmt.Sprintf("certificate already exists at %s. Use --force to overwrite it", cfg.CertFilePath))
 		return nil, errors.New("certificate already exists")
-	}
-	logger.Warn("signCertificate", "certificate already exists. Overwriting due to --force flag")
-	if err := util.FileDelete(cfg.CertFilePath); err != nil {
-		logger.Error("signCertificate", "failed to remove existing certificate: "+err.Error())
-		return nil, err
 	}
 
 	// create certificate template

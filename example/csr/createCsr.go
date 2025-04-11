@@ -8,6 +8,8 @@ import (
 )
 
 var createCsrYmlPath = "./createCsrCfg.yml"
+var force = true
+
 
 func main() {
 	var cfg model.CAConfig
