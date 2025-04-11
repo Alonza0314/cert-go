@@ -15,6 +15,7 @@ var privateKeyCmd = &cobra.Command{
 
 func init() {
 	privateKeyCmd.Flags().StringP("out", "o", "", "specify the output path of the private key")
+	privateKeyCmd.Flags().Bool("force", false, "overwrite the private key if it already exists")
 
 	if err := privateKeyCmd.MarkFlagRequired("out"); err != nil {
 		logger.Error("cert-go", err.Error())
@@ -30,8 +31,14 @@ func createPrivateKey(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	force, err := cmd.Flags().GetBool("force")
+	if err != nil {
+		logger.Error("cert-go", err.Error())
+		return
+	}
+
 	logger.Info("cert-go", "start to create private key")
-	if _, err := certgo.CreatePrivateKey(outputPath); err != nil {
+	if _, err := certgo.CreatePrivateKey(outputPath, force); err != nil {
 		logger.Error("cert-go", "failed to create private key")
 		return
 	}

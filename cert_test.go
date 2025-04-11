@@ -14,6 +14,7 @@ var testCaseCert = []struct {
 	yamlPath string
 	certPath string
 	exist    bool
+	force    bool
 	expect   *x509.Certificate
 }{
 	{
@@ -21,48 +22,84 @@ var testCaseCert = []struct {
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/root/root.cert.pem",
 		exist:    false,
+		force:    false,
 	},
 	{
-		name:     "root with exist",
+		name:     "root with exist and no force",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/root/root.cert.pem",
 		exist:    true,
+		force:    false,
+	},
+	{
+		name:     "root with exist and force",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/root/root.cert.pem",
+		exist:    true,
+		force:    true,
 	},
 	{
 		name:     "intermediate without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/intermediate/intermediate.cert.pem",
 		exist:    false,
+		force:    false,
 	},
 	{
-		name:     "intermediate with exist",
+		name:     "intermediate with exist and no force",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/intermediate/intermediate.cert.pem",
 		exist:    true,
+		force:    false,
+	},
+	{
+		name:     "intermediate with exist and force",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/intermediate/intermediate.cert.pem",
+		exist:    true,
+		force:    true,
 	},
 	{
 		name:     "server without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/server/server.cert.pem",
 		exist:    false,
+		force:    false,
 	},
 	{
-		name:     "server with exist",
+		name:     "server with exist and no force",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/server/server.cert.pem",
 		exist:    true,
+		force:    false,
+	},
+	{
+		name:     "server with exist and force",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/server/server.cert.pem",
+		exist:    true,
+		force:    true,
 	},
 	{
 		name:     "client without exist",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/client/client.cert.pem",
 		exist:    false,
+		force:    false,
 	},
 	{
-		name:     "client with exist",
+		name:     "client with exist and no force",
 		yamlPath: "./defaultCfg.yml",
 		certPath: "./default_ca/client/client.cert.pem",
 		exist:    true,
+		force:    false,
+	},
+	{
+		name:     "client with exist and force",
+		yamlPath: "./defaultCfg.yml",
+		certPath: "./default_ca/client/client.cert.pem",
+		exist:    true,
+		force:    true,
 	},
 }
 
@@ -71,18 +108,18 @@ func TestSignCertificate(t *testing.T) {
 	for _, testCase := range testCaseCert {
 		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
-			case "root without exist", "root with exist":
-				testCase.expect, err = SignRootCertificate(testCase.yamlPath)
-			case "intermediate without exist", "intermediate with exist":
-				testCase.expect, err = SignIntermediateCertificate(testCase.yamlPath)
-			case "server without exist", "server with exist":
-				testCase.expect, err = SignServerCertificate(testCase.yamlPath)
-			case "client without exist", "client with exist":
-				testCase.expect, err = SignClientCertificate(testCase.yamlPath)
+			case "root without exist", "root with exist and no force", "root with exist and force":
+				testCase.expect, err = SignRootCertificate(testCase.yamlPath, testCase.force)
+			case "intermediate without exist", "intermediate with exist and no force", "intermediate with exist and force":
+				testCase.expect, err = SignIntermediateCertificate(testCase.yamlPath, testCase.force)
+			case "server without exist", "server with exist and no force", "server with exist and force":
+				testCase.expect, err = SignServerCertificate(testCase.yamlPath, testCase.force)
+			case "client without exist", "client with exist and no force", "client with exist and force":
+				testCase.expect, err = SignClientCertificate(testCase.yamlPath, testCase.force)
 			}
-			if testCase.exist {
+			if testCase.exist && !testCase.force{
 				if err == nil || err.Error() != "certificate already exists" {
-					t.Fatalf("TestSignRootCertificate: certificate should exist")
+					t.Fatalf("TestSignCertificate (%s): expected error for existing certificate without force", testCase.name)	
 				}
 			} else {
 				if err != nil {

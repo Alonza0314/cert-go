@@ -7,17 +7,26 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"fmt"
 
 	"github.com/Alonza0314/cert-go/util"
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
+func CreatePrivateKey(keyPath string, force bool) (*ecdsa.PrivateKey, error) {
 	logger.Info("CreatePrivateKey", "creating private key")
 	// check if private key exists
 	if util.FileExists(keyPath) {
-		logger.Warn("CreatePrivateKey", "private key already exists")
-		return nil, errors.New("private key already exists")
+		if !force {
+			// logger.Errorf("CreatePrivateKey", "private key already exists at %s. Use --force to overwrite it", keyPath)
+			logger.Error("CreatePrivateKey", fmt.Sprintf("private key already exists at %s. Use --force to overwrite it", keyPath))
+			return nil, errors.New("private key already exists")
+		}
+		logger.Warn("CreatePrivateKey", "private key already exists. Overwriting due to --force flag")
+		if err := util.FileDelete(keyPath); err != nil {
+			logger.Error("CreatePrivateKey", "failed to remove existing private key: "+err.Error())
+			return nil, err
+		}
 	}
 
 	// generate private key
