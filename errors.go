@@ -6,10 +6,10 @@ import (
 	"path/filepath"
 )
 
-// CertError 表示证书操作相关的错误
+// CertError represents certificate operation related errors
 type CertError struct {
-	Op  string // 操作名称
-	Err error  // 原始错误
+	Op  string // Operation name
+	Err error  // Original error
 }
 
 func (e *CertError) Error() string {
@@ -19,12 +19,12 @@ func (e *CertError) Error() string {
 	return e.Op
 }
 
-// Unwrap 返回原始错误
+// Unwrap returns the original error
 func (e *CertError) Unwrap() error {
 	return e.Err
 }
 
-// NewCertError 创建一个新的证书错误
+// NewCertError creates a new certificate error
 func NewCertError(op string, err error) error {
 	if err == nil {
 		return nil
@@ -53,38 +53,38 @@ var (
 	ErrMissingField    = &CertError{Op: "missing required field"}
 )
 
-// IsCertError 检查错误是否为CertError类型
+// IsCertError checks if the error is a CertError type
 func IsCertError(err error) bool {
 	var certErr *CertError
 	return err != nil && err.Error() == certErr.Error()
 }
 
-// IsCertExists 检查错误是否为证书已存在错误
+// IsCertExists checks if the error is a certificate already exists error
 func IsCertExists(err error) bool {
 	return err != nil && err.Error() == ErrCertExists.Error()
 }
 
-// IsKeyNotFound 检查错误是否为私钥未找到错误
+// IsKeyNotFound checks if the error is a private key not found error
 func IsKeyNotFound(err error) bool {
 	return err != nil && err.Error() == ErrKeyNotFound.Error()
 }
 
-// IsCsrNotFound 检查错误是否为CSR未找到错误
+// IsCsrNotFound checks if the error is a CSR not found error
 func IsCsrNotFound(err error) bool {
 	return err != nil && err.Error() == ErrCsrNotFound.Error()
 }
 
-// IsInvalidConfig 检查错误是否为配置无效错误
+// IsInvalidConfig checks if the error is an invalid configuration error
 func IsInvalidConfig(err error) bool {
 	return err != nil && err.Error() == ErrInvalidConfig.Error()
 }
 
-// IsInvalidCertType 检查错误是否为证书类型无效错误
+// IsInvalidCertType checks if the error is an invalid certificate type error
 func IsInvalidCertType(err error) bool {
 	return err != nil && err.Error() == ErrInvalidCertType.Error()
 }
 
-// WrapFileError 包装文件操作相关的错误
+// WrapFileError wraps file operation related errors
 func WrapFileError(op string, err error) error {
 	if err == nil {
 		return nil
@@ -99,7 +99,7 @@ func WrapFileError(op string, err error) error {
 	}
 }
 
-// WrapPathError 包装路径相关的错误
+// WrapPathError wraps path related errors
 func WrapPathError(path string, err error) error {
 	if err == nil {
 		return nil

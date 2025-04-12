@@ -9,7 +9,7 @@ import (
 	"github.com/Alonza0314/cert-go/model"
 )
 
-// ValidateConfig 验证配置文件的完整性和合法性
+// ValidateConfig validates the completeness and legality of the configuration file
 func ValidateConfig(cfg *model.CAConfig) error {
 	if err := validateRootCert(cfg.CA.Root); err != nil {
 		return fmt.Errorf("root certificate: %w", err)
@@ -107,7 +107,7 @@ func validateCommonFields(cert model.Certificate) error {
 		return NewCertError("common fields validation", fmt.Errorf("%w: certificate file path", ErrMissingField))
 	}
 
-	// 验证文件路径
+	// Validate file paths
 	if err := validateFilePath(cert.KeyFilePath); err != nil {
 		return WrapPathError(cert.KeyFilePath, err)
 	}
@@ -122,14 +122,14 @@ func validateCommonFields(cert model.Certificate) error {
 		}
 	}
 
-	// 验证IP地址格式
+	// Validate IP address format
 	for _, ip := range cert.IPAddresses {
 		if net.ParseIP(ip) == nil {
 			return NewCertError("common fields validation", fmt.Errorf("%w: %s", ErrInvalidIP, ip))
 		}
 	}
 
-	// 验证URI格式
+	// Validate URI format
 	for _, uri := range cert.URIs {
 		if !strings.Contains(uri, ".") {
 			return NewCertError("common fields validation", fmt.Errorf("%w: %s", ErrInvalidURI, uri))
@@ -140,17 +140,17 @@ func validateCommonFields(cert model.Certificate) error {
 }
 
 func validateFilePath(path string) error {
-	// 检查路径是否为空
+	// Check if path is empty
 	if path == "" {
 		return ErrInvalidPath
 	}
 
-	// 检查路径是否包含非法字符
+	// Check if path contains invalid characters
 	if strings.ContainsAny(path, "<>:\"|?*") {
 		return fmt.Errorf("path contains invalid characters")
 	}
 
-	// 检查路径是否为绝对路径
+	// Check if path is absolute
 	if !filepath.IsAbs(path) {
 		return fmt.Errorf("path must be absolute")
 	}
