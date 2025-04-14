@@ -117,7 +117,7 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		}
 
 		// read parent key
-		cfg.ParentKey, err = util.ReadPrivateKey(cfg.ParentKeyPath)
+		cfg.ParentKey, err = util.ReadPrivateKey(cfg.ParentKeyPath, cfg.Passphrase)
 		if err != nil {
 			return nil, err
 		}

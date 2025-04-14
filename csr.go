@@ -28,14 +28,14 @@ func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
 	// check private key exists
 	if !util.FileExists(cfg.KeyFilePath) {
 		logger.Warn("CreateCsr", "private key does not exist")
-		privateKey, err = CreatePrivateKey(cfg.KeyFilePath)
+		privateKey, err = CreatePrivateKey(cfg.KeyFilePath, cfg.Passphrase)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	if privateKey == nil {
-		privateKey, err = util.ReadPrivateKey(cfg.KeyFilePath)
+		privateKey, err = util.ReadPrivateKey(cfg.KeyFilePath, cfg.Passphrase)
 		if err != nil {
 			return nil, err
 		}
