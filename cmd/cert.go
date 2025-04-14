@@ -16,6 +16,7 @@ var certCmd = &cobra.Command{
 func init() {
 	certCmd.Flags().StringP("yaml", "y", "", "specify the configuration yaml file path")
 	certCmd.Flags().StringP("type", "t", "", "specify the type of the certificate: [root, intermediate, server, client]")
+	certCmd.Flags().StringP("passphrase", "p", "", "passphrase for decrypting private key")
 
 	if err := certCmd.MarkFlagRequired("yaml"); err != nil {
 		logger.Error("cert-go", err.Error())
@@ -44,10 +45,16 @@ func createCert(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	passphrase, err := cmd.Flags().GetString("passphrase")
+	if err != nil {
+		logger.Error("cert-go", err.Error())
+		return
+	}
+
 	logger.Info("cert-go", "start to create cert")
 	switch certType {
 	case "root":
-		_, err = certgo.SignRootCertificate(yamlPath)
+		_, err = certgo.SignRootCertificate(yamlPath, passphrase)
 	case "intermediate":
 		_, err = certgo.SignIntermediateCertificate(yamlPath)
 	case "server":

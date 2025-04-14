@@ -23,7 +23,7 @@ func init() {
 	createCmd.AddCommand(privateKeyCmd)
 }
 
-func createPrivateKey(cmd *cobra.Command, args []string) {
+func createPrivateKey(cmd *cobra.Command, args []string, passphrase string) {
 	outputPath, err := cmd.Flags().GetString("out")
 	if err != nil {
 		logger.Error("cert-go", err.Error())
@@ -31,7 +31,7 @@ func createPrivateKey(cmd *cobra.Command, args []string) {
 	}
 
 	logger.Info("cert-go", "start to create private key")
-	if _, err := certgo.CreatePrivateKey(outputPath); err != nil {
+	if _, err := certgo.CreatePrivateKey(outputPath, passphrase); err != nil {
 		logger.Error("cert-go", "failed to create private key")
 		return
 	}

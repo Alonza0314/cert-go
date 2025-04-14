@@ -71,13 +71,13 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		// root certificate self-signed
 		if !util.FileExists(cfg.KeyFilePath) {
 			logger.Warn("signCertificate", "private key does not exist")
-			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath)
+			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, cfg.Passphrase)
 			if err != nil {
 				return nil, err
 			}
 		}
 		if cfg.ParentKey == nil {
-			cfg.ParentKey, err = util.ReadPrivateKey(cfg.KeyFilePath)
+			cfg.ParentKey, err = util.ReadPrivateKey(cfg.KeyFilePath, cfg.Passphrase)
 			if err != nil {
 				return nil, err
 			}
@@ -159,11 +159,12 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 	return cert, nil
 }
 
-func SignRootCertificate(yamlPath string) (*x509.Certificate, error) {
+func SignRootCertificate(yamlPath string, passphrase string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
+	cfg.CA.Root.Passphrase = passphrase
 	cert, err := signCertificate(cfg.CA.Root)
 	if err != nil {
 		return nil, err

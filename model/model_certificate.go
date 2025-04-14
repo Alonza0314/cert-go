@@ -9,6 +9,7 @@ type Certificate struct {
 	Type         string `yaml:"type"`
 	CertFilePath string `yaml:"cert"`
 	KeyFilePath  string `yaml:"private_key"`
+	Passphrase   string `yaml:"passphrase"`
 	CsrFilePath  string `yaml:"csr"`
 
 	ParentCertPath string `yaml:"parent_cert"`
