@@ -136,17 +136,17 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		Bytes: certBytes,
 	})
 
-	if err := util.FileWrite(cfg.CertFilePath, certPEM, 0644); err != nil {
-		return nil, err
-	}
-
-	// create directory exists
+	// Check directory exists
 	if !util.FileDirExists(cfg.CertFilePath) {
 		logger.Warn("signCertificate", util.FileDir(cfg.CertFilePath)+" directory not exists, creating...")
 		if err := util.FileDirCreate(cfg.CertFilePath); err != nil {
 			return nil, err
 		}
 		logger.Info("signCertificate", util.FileDir(cfg.CertFilePath)+" directory created")
+	}
+	
+	if err := util.FileWrite(cfg.CertFilePath, certPEM, 0644); err != nil {
+		return nil, err
 	}
 
 	logger.Info("signCertificate", cfg.Type+" certificate signed")
@@ -176,6 +176,17 @@ func SignIntermediateCertificate(yamlPath string) (*x509.Certificate, error) {
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
+	
+	// Check parent certificate exists
+	_, err := util.ReadCertificate(cfg.CA.Intermediate.ParentCertPath)
+	if err != nil {
+		logger.Warn("signCertificate", "Parent certificate does not exist")
+		_, err := signCertificate(cfg.CA.Root)
+		if err != nil {
+			return nil, err
+		}
+	}
+	
 	cert, err := signCertificate(cfg.CA.Intermediate)
 	if err != nil {
 		return nil, err
@@ -188,6 +199,17 @@ func SignServerCertificate(yamlPath string) (*x509.Certificate, error) {
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
+	
+	// Check parent certificate exists
+	_, err := util.ReadCertificate(cfg.CA.Server.ParentCertPath)
+	if err != nil {
+		logger.Warn("signCertificate", "Parent certificate does not exist")
+		_, err := signCertificate(cfg.CA.Intermediate)
+		if err != nil {
+			return nil, err
+		}
+	}
+	
 	cert, err := signCertificate(cfg.CA.Server)
 	if err != nil {
 		return nil, err
@@ -200,6 +222,17 @@ func SignClientCertificate(yamlPath string) (*x509.Certificate, error) {
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
+	
+	// Check parent certificate exists
+	_, err := util.ReadCertificate(cfg.CA.Client.ParentCertPath)
+	if err != nil {
+		logger.Warn("signCertificate", "Parent certificate does not exist")
+		_, err := signCertificate(cfg.CA.Intermediate)
+		if err != nil {
+			return nil, err
+		}
+	}
+	
 	cert, err := signCertificate(cfg.CA.Client)
 	if err != nil {
 		return nil, err
