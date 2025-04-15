@@ -13,12 +13,12 @@ import (
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func CreatePrivateKey(keyPath string, force bool) (*ecdsa.PrivateKey, error) {
+func CreatePrivateKey(keyPath string, overwrite bool) (*ecdsa.PrivateKey, error) {
 	logger.Info("CreatePrivateKey", "creating private key")
 
 	// check if private key exists
 	if util.FileExists(keyPath) {
-		if !force {
+		if !overwrite {
 			logger.Error("CreatePrivateKey", fmt.Sprintf("private key already exists at %s.", keyPath))
 			return nil, errors.New("private key already exists")
 		}

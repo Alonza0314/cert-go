@@ -17,12 +17,12 @@ import (
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func signCertificate(cfg model.Certificate, force bool) (*x509.Certificate, error) {
+func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
 	// check certificate exists
 	if util.FileExists(cfg.CertFilePath) {
-		if !force {
+		if !overwrite {
 			logger.Error("signCertificate", fmt.Sprintf("certificate already exists at %s.", cfg.CertFilePath))
 			return nil, errors.New("certificate already exists")
 		}
@@ -79,7 +79,7 @@ func signCertificate(cfg model.Certificate, force bool) (*x509.Certificate, erro
 		// root certificate self-signed
 		if !util.FileExists(cfg.KeyFilePath) {
 			logger.Warn("signCertificate", "private key does not exist")
-			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, force)
+			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
 			if err != nil {
 				return nil, err
 			}
@@ -101,7 +101,7 @@ func signCertificate(cfg model.Certificate, force bool) (*x509.Certificate, erro
 		var csr *x509.CertificateRequest
 		if !util.FileExists(cfg.CsrFilePath) {
 			logger.Warn("signCertificate", "CSR file does not exist")
-			csr, err = CreateCsr(cfg, force)
+			csr, err = CreateCsr(cfg, overwrite)
 			if err != nil {
 				return nil, err
 			}
@@ -175,48 +175,48 @@ func signCertificate(cfg model.Certificate, force bool) (*x509.Certificate, erro
 	return cert, nil
 }
 
-func SignRootCertificate(yamlPath string, force bool) (*x509.Certificate, error) {
+func SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Root, force)
+	cert, err := signCertificate(cfg.CA.Root, overwrite)
 	if err != nil {
 		return nil, err
 	}
 	return cert, nil
 }
 
-func SignIntermediateCertificate(yamlPath string, force bool) (*x509.Certificate, error) {
+func SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Intermediate, force)
+	cert, err := signCertificate(cfg.CA.Intermediate, overwrite)
 	if err != nil {
 		return nil, err
 	}
 	return cert, nil
 }
 
-func SignServerCertificate(yamlPath string, force bool) (*x509.Certificate, error) {
+func SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Server, force)
+	cert, err := signCertificate(cfg.CA.Server, overwrite)
 	if err != nil {
 		return nil, err
 	}
 	return cert, nil
 }
 
-func SignClientCertificate(yamlPath string, force bool) (*x509.Certificate, error) {
+func SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Client, force)
+	cert, err := signCertificate(cfg.CA.Client, overwrite)
 	if err != nil {
 		return nil, err
 	}
