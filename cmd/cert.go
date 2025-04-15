@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"strings"
+
 	certgo "github.com/Alonza0314/cert-go"
 	logger "github.com/Alonza0314/logger-go"
 	"github.com/spf13/cobra"
@@ -62,6 +64,9 @@ func createCert(cmd *cobra.Command, args []string) {
 		_, err = certgo.SignClientCertificate(yamlPath, force)
 	}
 	if err != nil {
+		if strings.Contains(err.Error(), "already exists") {
+			logger.Error("cert-go", "use --force(f) to overwrite the cert")
+		}
 		logger.Error("cert-go", "failed to create cert")
 		return
 	}

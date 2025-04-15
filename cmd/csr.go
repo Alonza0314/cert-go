@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"strings"
+
 	certgo "github.com/Alonza0314/cert-go"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
@@ -67,6 +69,9 @@ func createCsr(cmd *cobra.Command, args []string) {
 		_, err = certgo.CreateCsr(cfg.CA.Client, force)
 	}
 	if err != nil {
+		if strings.Contains(err.Error(), "already exists") {
+			logger.Error("cert-go", "use --force(f) to overwrite the csr")
+		}
 		logger.Error("cert-go", "failed to create csr")
 		return
 	}
