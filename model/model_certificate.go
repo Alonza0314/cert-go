@@ -28,4 +28,5 @@ type Certificate struct {
 	DNSNames    []string `yaml:"dns_names"`
 	IPAddresses []string `yaml:"ip_addresses"`
 	URIs        []string `yaml:"uris"`
+
 }

@@ -9,6 +9,7 @@ import (
 
 var createCsrYmlPath = "./createCsrCfg.yml"
 
+
 func main() {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(createCsrYmlPath, &cfg); err != nil {
@@ -16,7 +17,7 @@ func main() {
 	}
 
 	logger.Info("CreateCsr", "creating csr")
-	if _, err := certgo.CreateCsr(cfg.CA.Intermediate); err != nil {
+	if _, err := certgo.CreateCsr(cfg.CA.Intermediate, true); err != nil {
 		return
 	}
 
