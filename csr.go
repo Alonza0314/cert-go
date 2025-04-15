@@ -20,10 +20,10 @@ func CreateCsr(cfg model.Certificate, force bool) (*x509.CertificateRequest, err
 	// check csr exists
 	if util.FileExists(cfg.CsrFilePath) {
 		if !force {
-			logger.Error("CreateCsr", fmt.Sprintf("CSR already exists at %s. Use --force to overwrite it", cfg.CertFilePath))
+			logger.Error("CreateCsr", fmt.Sprintf("CSR already exists at %s.", cfg.CertFilePath))
 			return nil, errors.New("csr already exists")
 		}
-		logger.Warn("CreateCsr", "CSR already exists. Overwriting due to --force flag")
+		logger.Warn("CreateCsr", "CSR already exists. Overwrite it")
 		if err := util.FileDelete(cfg.CsrFilePath); err != nil {
 			logger.Error("CreateCsr", "failed to remove existing CSR: "+err.Error())
 			return nil, err

@@ -6,11 +6,11 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"math/big"
 	"net"
 	"net/url"
 	"time"
-	"fmt"
 
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
@@ -21,9 +21,16 @@ func signCertificate(cfg model.Certificate, force bool) (*x509.Certificate, erro
 	logger.Info("signCertificate", "signing certificate")
 
 	// check certificate exists
-	if !force && util.FileExists(cfg.CertFilePath) {
-		logger.Error("signCertificate", fmt.Sprintf("certificate already exists at %s. Use --force to overwrite it", cfg.CertFilePath))
-		return nil, errors.New("certificate already exists")
+	if util.FileExists(cfg.CertFilePath) {
+		if !force {
+			logger.Error("signCertificate", fmt.Sprintf("certificate already exists at %s.", cfg.CertFilePath))
+			return nil, errors.New("certificate already exists")
+		}
+		logger.Warn("signCertificate", "certificate already exists. Overwrite it")
+		if err := util.FileDelete(cfg.CertFilePath); err != nil {
+			logger.Error("signCertificate", "failed to remove existing certificate: "+err.Error())
+			return nil, err
+		}
 	}
 
 	// create certificate template

@@ -15,13 +15,14 @@ import (
 
 func CreatePrivateKey(keyPath string, force bool) (*ecdsa.PrivateKey, error) {
 	logger.Info("CreatePrivateKey", "creating private key")
+
 	// check if private key exists
 	if util.FileExists(keyPath) {
 		if !force {
-			logger.Error("CreatePrivateKey", fmt.Sprintf("private key already exists at %s. Use --force to overwrite it", keyPath))
+			logger.Error("CreatePrivateKey", fmt.Sprintf("private key already exists at %s.", keyPath))
 			return nil, errors.New("private key already exists")
 		}
-		logger.Warn("CreatePrivateKey", "private key already exists. Overwriting due to --force flag")
+		logger.Warn("CreatePrivateKey", "private key already exists. Overwrite it")
 		if err := util.FileDelete(keyPath); err != nil {
 			logger.Error("CreatePrivateKey", "failed to remove existing private key: "+err.Error())
 			return nil, err
