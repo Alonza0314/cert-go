@@ -19,10 +19,10 @@ In this example, we will sign the root certificate and save it to the `./root_ce
 As we demonstrate how to sign the root certificate, for intermediate or end-entity certificate, it is the same process except the sign function name:
 
 ```go
-SignRootCertificate(yamlPath string) ([]byte, error)
-SignIntermediateCertificate(yamlPath string) ([]byte, error)
-SignServerCertificate(yamlPath string) ([]byte, error)
-SignClientCertificate(yamlPath string) ([]byte, error)
+SignRootCertificate(yamlPath string, overwrite bool) ([]byte, error)
+SignIntermediateCertificate(yamlPath string, overwrite bool) ([]byte, error)
+SignServerCertificate(yamlPath string, overwrite bool) ([]byte, error)
+SignClientCertificate(yamlPath string, overwrite bool) ([]byte, error)
 ```
 
 [Click here to see the example](./cert/)
