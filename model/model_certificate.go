@@ -24,7 +24,6 @@ type Certificate struct {
 	ValidityDay   int    `yaml:"validity_day"`
 	KeyUsage      x509.KeyUsage
 	ExtKeyUsage   []x509.ExtKeyUsage
-	Force 		  bool 	 `yaml:"-"`
 
 	DNSNames    []string `yaml:"dns_names"`
 	IPAddresses []string `yaml:"ip_addresses"`

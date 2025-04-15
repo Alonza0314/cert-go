@@ -18,7 +18,7 @@ var csrCmd = &cobra.Command{
 func init() {
 	csrCmd.Flags().StringP("yaml", "y", "", "specify the configuration yaml file path")
 	csrCmd.Flags().StringP("type", "t", "", "specify the type of the certificate: [intermediate, server, client]")
-	csrCmd.Flags().Bool("force", false, "overwrite the csr if it already exists")
+	csrCmd.Flags().BoolP("force", "f", false, "overwrite the csr if it already exists")
 
 	if err := csrCmd.MarkFlagRequired("yaml"); err != nil {
 		logger.Error("cert-go", err.Error())
@@ -60,14 +60,11 @@ func createCsr(cmd *cobra.Command, args []string) {
 	}
 	switch csrType {
 	case "intermediate":
-		cfg.CA.Intermediate.Force = force
-		_, err = certgo.CreateCsr(cfg.CA.Intermediate)
+		_, err = certgo.CreateCsr(cfg.CA.Intermediate, force)
 	case "server":
-		cfg.CA.Server.Force = force
-		_, err = certgo.CreateCsr(cfg.CA.Server)
+		_, err = certgo.CreateCsr(cfg.CA.Server, force)
 	case "client":
-		cfg.CA.Client.Force = force
-		_, err = certgo.CreateCsr(cfg.CA.Client)
+		_, err = certgo.CreateCsr(cfg.CA.Client, force)
 	}
 	if err != nil {
 		logger.Error("cert-go", "failed to create csr")

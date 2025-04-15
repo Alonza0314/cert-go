@@ -7,7 +7,6 @@ import (
 
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
-	// "github.com/Alonza0314/cert-go"
 )
 
 
@@ -51,8 +50,7 @@ func TestCreateCsr(t *testing.T) {
 	var err error
 	for _, testCase := range testCaseCsr {
 		t.Run(testCase.name, func(t *testing.T) {
-			testCase.cfg.Force = testCase.force
-			testCase.expect, err = CreateCsr(testCase.cfg)
+			testCase.expect, err = CreateCsr(testCase.cfg, testCase.force)
 			if testCase.exist && !testCase.force {
 				if err == nil || err.Error() != "csr already exists" {
 					t.Fatalf("TestCreateCsr (%s): csr should exist and raise error", testCase.name)

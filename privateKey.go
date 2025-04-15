@@ -18,7 +18,6 @@ func CreatePrivateKey(keyPath string, force bool) (*ecdsa.PrivateKey, error) {
 	// check if private key exists
 	if util.FileExists(keyPath) {
 		if !force {
-			// logger.Errorf("CreatePrivateKey", "private key already exists at %s. Use --force to overwrite it", keyPath)
 			logger.Error("CreatePrivateKey", fmt.Sprintf("private key already exists at %s. Use --force to overwrite it", keyPath))
 			return nil, errors.New("private key already exists")
 		}

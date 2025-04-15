@@ -14,13 +14,12 @@ import (
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
+func CreateCsr(cfg model.Certificate, force bool) (*x509.CertificateRequest, error) {
 	logger.Info("CreateCsr", "creating csr")
 
 	// check csr exists
 	if util.FileExists(cfg.CsrFilePath) {
-		if !cfg.Force {
-			// logger.Errorf("CreateCsr", "CSR already exists at %s. Use --force to overwrite it", cfg.CsrFilePath)
+		if !force {
 			logger.Error("CreateCsr", fmt.Sprintf("CSR already exists at %s. Use --force to overwrite it", cfg.CertFilePath))
 			return nil, errors.New("csr already exists")
 		}
@@ -37,7 +36,7 @@ func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
 	// check private key exists
 	if !util.FileExists(cfg.KeyFilePath) {
 		logger.Warn("CreateCsr", "private key does not exist")
-		privateKey, err = CreatePrivateKey(cfg.KeyFilePath, cfg.Force)
+		privateKey, err = CreatePrivateKey(cfg.KeyFilePath, force)
 		if err != nil {
 			return nil, err
 		}
