@@ -9,7 +9,6 @@ Usage:
   cert-go create private-key [flags]
 
 Flags:
-  -f, --force        overwrite the private key if it already exists
   -h, --help         help for private-key
   -o, --out string   specify the output path of the private key
 ```
@@ -23,10 +22,10 @@ Usage:
   cert-go create csr [flags]
 
 Flags:
-  -f, --force         overwrite the csr if it already exists
   -h, --help          help for csr
   -t, --type string   specify the type of the certificate: [intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path
+  -o, --org string    override the organization field (optional)
 ```
 
 ## certificate
@@ -38,7 +37,6 @@ Usage:
   cert-go create cert [flags]
 
 Flags:
-  -f, --force         overwrite the certificate if it already exists
   -h, --help          help for cert
   -t, --type string   specify the type of the certificate: [root, intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path

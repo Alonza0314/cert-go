@@ -11,34 +11,25 @@ var testCasePrivateKey = []struct {
 	name    string
 	keyPath string
 	exist   bool
-	force   bool
 	expect  *ecdsa.PrivateKey
 }{
 	{
 		name:    "test without exist",
 		keyPath: "./default_ca/test.key.pem",
 		exist:   false,
-		force:   false,
 	},
 	{
-		name:    "test with exist and no force",
+		name:    "test with exist",
 		keyPath: "./default_ca/test.key.pem",
 		exist:   true,
-		force:   false,
-	},
-	{
-		name:    "test with exist and force",
-		keyPath: "./default_ca/test.key.pem",
-		exist:   true,
-		force:   true,
 	},
 }
 
 func TestCreatePrivateKey(t *testing.T) {
 	for _, testCase := range testCasePrivateKey {
 		t.Run(testCase.name, func(t *testing.T) {
-			privateKey, err := CreatePrivateKey(testCase.keyPath, testCase.force)
-			if testCase.exist && !testCase.force {
+			privateKey, err := CreatePrivateKey(testCase.keyPath)
+			if testCase.exist {
 				if err == nil || err.Error() != "private key already exists" {
 					t.Fatalf("TestCreatePrivateKey: private key should exist")
 				}
@@ -60,11 +51,9 @@ func TestCreatePrivateKey(t *testing.T) {
 		})
 	}
 	for _, testCase := range testCasePrivateKey {
-		if !testCase.exist || testCase.force {
-			if util.FileExists(testCase.keyPath) {
-				if err := util.FileDelete(testCase.keyPath); err != nil {
-					t.Fatalf("TestCreatePrivateKey (%s): failed to delete key: %v", testCase.name, err)
-				}
+		if !testCase.exist {
+			if err := util.FileDelete(testCase.keyPath); err != nil {
+				t.Fatalf("TestCreatePrivateKey: %v", err)
 			}
 		}
 	}

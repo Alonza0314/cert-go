@@ -6,7 +6,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
-	"fmt"
 	"math/big"
 	"net"
 	"net/url"
@@ -17,20 +16,13 @@ import (
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, error) {
+func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
 	// check certificate exists
 	if util.FileExists(cfg.CertFilePath) {
-		if !overwrite {
-			logger.Error("signCertificate", fmt.Sprintf("certificate already exists at %s.", cfg.CertFilePath))
-			return nil, errors.New("certificate already exists")
-		}
-		logger.Warn("signCertificate", "certificate already exists. Overwrite it")
-		if err := util.FileDelete(cfg.CertFilePath); err != nil {
-			logger.Error("signCertificate", "failed to remove existing certificate: "+err.Error())
-			return nil, err
-		}
+		logger.Warn("signCertificate", "certificate already exists")
+		return nil, errors.New("certificate already exists")
 	}
 
 	// create certificate template
@@ -79,7 +71,7 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 		// root certificate self-signed
 		if !util.FileExists(cfg.KeyFilePath) {
 			logger.Warn("signCertificate", "private key does not exist")
-			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
+			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath)
 			if err != nil {
 				return nil, err
 			}
@@ -101,7 +93,7 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 		var csr *x509.CertificateRequest
 		if !util.FileExists(cfg.CsrFilePath) {
 			logger.Warn("signCertificate", "CSR file does not exist")
-			csr, err = CreateCsr(cfg, overwrite)
+			csr, err = CreateCsr(cfg)
 			if err != nil {
 				return nil, err
 			}
@@ -164,59 +156,51 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 		logger.Error("signCertificate", err.Error())
 		return nil, err
 	}
-
-	logger.Info("signCertificate", fmt.Sprintf("%s certificate for CN=%s (Org=%s), valid from %s to %s",
-		cfg.Type,
-		cfg.CommonName,
-		cfg.Organization,
-		template.NotBefore.Format("2006-01-02"),
-		template.NotAfter.Format("2006-01-02"),
-	))
 	return cert, nil
 }
 
-func SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+func SignRootCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Root, overwrite)
+	cert, err := signCertificate(cfg.CA.Root)
 	if err != nil {
 		return nil, err
 	}
 	return cert, nil
 }
 
-func SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+func SignIntermediateCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Intermediate, overwrite)
+	cert, err := signCertificate(cfg.CA.Intermediate)
 	if err != nil {
 		return nil, err
 	}
 	return cert, nil
 }
 
-func SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+func SignServerCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Server, overwrite)
+	cert, err := signCertificate(cfg.CA.Server)
 	if err != nil {
 		return nil, err
 	}
 	return cert, nil
 }
 
-func SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+func SignClientCertificate(yamlPath string) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Client, overwrite)
+	cert, err := signCertificate(cfg.CA.Client)
 	if err != nil {
 		return nil, err
 	}

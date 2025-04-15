@@ -7,27 +7,19 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"errors"
-	"fmt"
 
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest, error) {
+func CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error) {
 	logger.Info("CreateCsr", "creating csr")
 
 	// check csr exists
 	if util.FileExists(cfg.CsrFilePath) {
-		if !overwrite {
-			logger.Error("CreateCsr", fmt.Sprintf("CSR already exists at %s.", cfg.CertFilePath))
-			return nil, errors.New("csr already exists")
-		}
-		logger.Warn("CreateCsr", "CSR already exists. Overwrite it")
-		if err := util.FileDelete(cfg.CsrFilePath); err != nil {
-			logger.Error("CreateCsr", "failed to remove existing CSR: "+err.Error())
-			return nil, err
-		}
+		logger.Warn("CreateCsr", "csr already exists")
+		return nil, errors.New("csr already exists")
 	}
 
 	var privateKey *ecdsa.PrivateKey
@@ -36,7 +28,7 @@ func CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest,
 	// check private key exists
 	if !util.FileExists(cfg.KeyFilePath) {
 		logger.Warn("CreateCsr", "private key does not exist")
-		privateKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
+		privateKey, err = CreatePrivateKey(cfg.KeyFilePath)
 		if err != nil {
 			return nil, err
 		}
