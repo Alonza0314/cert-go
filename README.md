@@ -14,7 +14,7 @@ Also, we expected to link third party CA certificates to generate certificates i
 ## Usage
 
 > [!NOTE]
-> If the target file (certificate, csr, private key) is existed, the function will not create it and directly return an error, cert/csr/private key already exists.
+> If the target file (certificate, csr, private key) is existed, the function will not create it and directly return an error, cert/csr/private key already exists. Or you can use the `overwrite` argument to overwrite the existing file.
 
 1. Prepare the destination directory for the private key, certificate, and CSR. This step is required for all the following steps.
 
@@ -31,7 +31,7 @@ Also, we expected to link third party CA certificates to generate certificates i
 4. For create private key, you need to specify the path of the destination file. Then, use this function:
 
     ```go
-    CreatePrivateKey(keyPath string) (*ecdsa.PrivateKey, error)
+    CreatePrivateKey(keyPath string, overwrite bool) (*ecdsa.PrivateKey, error)
     ```
 
     The return value is the private key in `*ecdsa.PrivateKey` type.
@@ -45,7 +45,7 @@ Also, we expected to link third party CA certificates to generate certificates i
     Then, use this function:
 
     ```go
-    CreateCsr(cfg model.Certificate) (*x509.CertificateRequest, error)
+    CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest, error)
     ```
 
     The return value is the csr in `*x509.CertificateRequest` type.
@@ -56,10 +56,10 @@ Also, we expected to link third party CA certificates to generate certificates i
 6. For sign certificate, you need to specify the yaml file path of the CA configuration. Then, use these functions for different types of certificates:
 
     ```go
-    SignRootCertificate(yamlPath string) (*x509.Certificate, error)
-    SignIntermediateCertificate(yamlPath string) (*x509.Certificate, error)
-    SignServerCertificate(yamlPath string) (*x509.Certificate, error)
-    SignClientCertificate(yamlPath string) (*x509.Certificate, error)
+    SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
+    SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
+    SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
+    SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
     ```
 
     The return value is the signed certificate in `*x509.Certificate` type.
