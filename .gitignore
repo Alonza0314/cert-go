@@ -4,5 +4,6 @@ build/
 *.pem
 *.csr
 *.key
-*.crtcert-go
-cert-go
+*.crt
+
+cert-go*
