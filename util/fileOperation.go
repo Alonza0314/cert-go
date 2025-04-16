@@ -16,7 +16,7 @@ func FileExists(filePath string) bool {
 func FileWrite(filePath string, data []byte, code fs.FileMode) error {
 	err := os.WriteFile(filePath, data, code)
 	if err != nil {
-		logger.Error("FileWrite", err.Error())
+		logger.Error("FileWrite", filePath+", "+err.Error())
 	}
 	return err
 }
@@ -24,7 +24,7 @@ func FileWrite(filePath string, data []byte, code fs.FileMode) error {
 func FileDelete(filePath string) error {
 	err := os.Remove(filePath)
 	if err != nil {
-		logger.Error("FileDelete", err.Error())
+		logger.Error("FileDelete", filePath+", "+err.Error())
 	}
 	return err
 }
@@ -36,7 +36,7 @@ func FileDir(filePath string) string {
 func FileDirCreate(filePath string) error {
 	err := os.MkdirAll(filepath.Dir(filePath), 0775)
 	if err != nil {
-		logger.Error("FileDirCreate", err.Error())
+		logger.Error("FileDirCreate", filePath+", "+err.Error())
 	}
 	return err
 }
