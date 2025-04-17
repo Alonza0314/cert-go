@@ -10,7 +10,7 @@ var privateKeyPath = "./private_key.pem"
 func main() {
 	logger.Info("CreatePrivateKey", "creating private key")
 
-	if _, err := certgo.CreatePrivateKey(privateKeyPath); err != nil {
+	if _, err := certgo.CreatePrivateKey(privateKeyPath, true); err != nil {
 		return
 	}
 

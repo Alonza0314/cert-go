@@ -5,6 +5,8 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
+	"fmt"
 	"math/big"
 	"net"
 	"net/url"
@@ -25,13 +27,20 @@ const (
 	CertTypeClient       CertificateType = "client"
 )
 
-func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
+func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
 	// Check if certificate exists
 	if util.FileExists(cfg.CertFilePath) {
-		logger.Warn("signCertificate", "certificate already exists")
-		return nil, ErrCertExists
+		if !overwrite {
+			logger.Error("signCertificate", fmt.Sprintf("certificate already exists at %s.", cfg.CertFilePath))
+			return nil, errors.New("certificate already exists")
+		}
+		logger.Warn("signCertificate", "certificate already exists. Overwrite it")
+		if err := util.FileDelete(cfg.CertFilePath); err != nil {
+			logger.Error("signCertificate", "failed to remove existing certificate: "+err.Error())
+			return nil, err
+		}
 	}
 
 	// Create certificate template
@@ -80,7 +89,7 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		// Root certificate self-signed
 		if !util.FileExists(cfg.KeyFilePath) {
 			logger.Warn("signCertificate", "private key does not exist")
-			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath)
+			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
 			if err != nil {
 				return nil, NewCertError("create private key", err)
 			}
@@ -102,7 +111,7 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		var csr *x509.CertificateRequest
 		if !util.FileExists(cfg.CsrFilePath) {
 			logger.Warn("signCertificate", "CSR file does not exist")
-			csr, err = CreateCsr(cfg)
+			csr, err = CreateCsr(cfg, overwrite)
 			if err != nil {
 				return nil, NewCertError("create CSR", err)
 			}
@@ -166,49 +175,61 @@ func signCertificate(cfg model.Certificate) (*x509.Certificate, error) {
 		logger.Error("signCertificate", err.Error())
 		return nil, NewCertError("parse certificate", err)
 	}
+
+	logger.Info("signCertificate", fmt.Sprintf("%s certificate for CN=%s (Org=%s), valid from %s to %s",
+		cfg.Type,
+		cfg.CommonName,
+		cfg.Organization,
+		template.NotBefore.Format("2006-01-02"),
+		template.NotAfter.Format("2006-01-02"),
+	))
 	return cert, nil
 }
 
-// SignCertificate signs a certificate based on the certificate type
-func SignCertificate(yamlPath string, certType CertificateType) (*x509.Certificate, error) {
+func SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
-		return nil, NewCertError("read config file", err)
+		return nil, err
 	}
-
-	var cert model.Certificate
-	switch certType {
-	case CertTypeRoot:
-		cert = cfg.CA.Root
-	case CertTypeIntermediate:
-		cert = cfg.CA.Intermediate
-	case CertTypeServer:
-		cert = cfg.CA.Server
-	case CertTypeClient:
-		cert = cfg.CA.Client
-	default:
-		return nil, ErrInvalidCertType
+	cert, err := signCertificate(cfg.CA.Root, overwrite)
+	if err != nil {
+		return nil, err
 	}
-
-	return signCertificate(cert)
+	return cert, nil
 }
 
-// SignRootCertificate signs a root certificate
-func SignRootCertificate(yamlPath string) (*x509.Certificate, error) {
-	return SignCertificate(yamlPath, CertTypeRoot)
+func SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+	var cfg model.CAConfig
+	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+		return nil, err
+	}
+	cert, err := signCertificate(cfg.CA.Intermediate, overwrite)
+	if err != nil {
+		return nil, err
+	}
+	return cert, nil
 }
 
-// SignIntermediateCertificate signs an intermediate certificate
-func SignIntermediateCertificate(yamlPath string) (*x509.Certificate, error) {
-	return SignCertificate(yamlPath, CertTypeIntermediate)
+func SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+	var cfg model.CAConfig
+	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+		return nil, err
+	}
+	cert, err := signCertificate(cfg.CA.Server, overwrite)
+	if err != nil {
+		return nil, err
+	}
+	return cert, nil
 }
 
-// SignServerCertificate signs a server certificate
-func SignServerCertificate(yamlPath string) (*x509.Certificate, error) {
-	return SignCertificate(yamlPath, CertTypeServer)
-}
-
-// SignClientCertificate signs a client certificate
-func SignClientCertificate(yamlPath string) (*x509.Certificate, error) {
-	return SignCertificate(yamlPath, CertTypeClient)
+func SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+	var cfg model.CAConfig
+	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+		return nil, err
+	}
+	cert, err := signCertificate(cfg.CA.Client, overwrite)
+	if err != nil {
+		return nil, err
+	}
+	return cert, nil
 }
