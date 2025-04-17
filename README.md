@@ -6,10 +6,10 @@ Also, we plan to link third-party CA certificates to generate certificates in th
 
 ## Development Environment
 
-| Type   | Version              |
-| ------ | -------------------- |
-| OS     | Ubuntu 22.04.5       |
-| Golang | go1.22.5 linux/amd64 |
+|Type|Version|
+|-|-|
+|OS|Ubuntu 22.04.5|
+|Golang|go1.22.5 linux/amd64|
 
 ## Usage
 
