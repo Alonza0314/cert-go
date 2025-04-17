@@ -48,7 +48,7 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 	serialNumber, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), 128))
 	if err != nil {
 		logger.Error("signCertificate", err.Error())
-		return nil, NewCertError("generate serial number", err)
+		return nil, err
 	}
 
 	notBefore := time.Now()
@@ -91,20 +91,20 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 			logger.Warn("signCertificate", "private key does not exist")
 			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
 			if err != nil {
-				return nil, NewCertError("create private key", err)
+				return nil, err
 			}
 		}
 		if cfg.ParentKey == nil {
 			cfg.ParentKey, err = util.ReadPrivateKey(cfg.KeyFilePath)
 			if err != nil {
-				return nil, NewCertError("read private key", err)
+				return nil, err
 			}
 		}
 
 		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, &cfg.ParentKey.PublicKey, cfg.ParentKey)
 		if err != nil {
 			logger.Error("signCertificate", err.Error())
-			return nil, NewCertError("create root certificate", err)
+			return nil, err
 		}
 	} else {
 		// intermediate certificate or end-entity certificate
@@ -113,38 +113,38 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 			logger.Warn("signCertificate", "CSR file does not exist")
 			csr, err = CreateCsr(cfg, overwrite)
 			if err != nil {
-				return nil, NewCertError("create CSR", err)
+				return nil, err
 			}
 		}
 		if csr == nil {
 			csr, err = util.ReadCsr(cfg.CsrFilePath)
 			if err != nil {
-				return nil, NewCertError("read CSR", err)
+				return nil, err
 			}
 		}
 
 		if err := csr.CheckSignature(); err != nil {
 			logger.Error("signCertificate", err.Error())
-			return nil, NewCertError("check CSR signature", err)
+			return nil, err
 		}
 
 		// read parent cert
 		cfg.ParentCert, err = util.ReadCertificate(cfg.ParentCertPath)
 		if err != nil {
-			return nil, NewCertError("read parent certificate", err)
+			return nil, err
 		}
 
 		// read parent key
 		cfg.ParentKey, err = util.ReadPrivateKey(cfg.ParentKeyPath)
 		if err != nil {
-			return nil, NewCertError("read parent private key", err)
+			return nil, err
 		}
 
 		// sign certificate with parent certificate
 		certBytes, err = x509.CreateCertificate(rand.Reader, template, cfg.ParentCert, csr.PublicKey, cfg.ParentKey)
 		if err != nil {
 			logger.Error("signCertificate", err.Error())
-			return nil, NewCertError("create certificate", err)
+			return nil, err
 		}
 	}
 
@@ -158,14 +158,14 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 	if !util.FileDirExists(cfg.CertFilePath) {
 		logger.Warn("signCertificate", util.FileDir(cfg.CertFilePath)+" directory not exists, creating...")
 		if err := util.FileDirCreate(cfg.CertFilePath); err != nil {
-			return nil, NewCertError("create directory", err)
+			return nil, err
 		}
 		logger.Info("signCertificate", util.FileDir(cfg.CertFilePath)+" directory created")
 	}
 
 	// write certificate file
 	if err := util.FileWrite(cfg.CertFilePath, certPEM, 0644); err != nil {
-		return nil, NewCertError("write certificate file", err)
+		return nil, err
 	}
 
 	logger.Info("signCertificate", cfg.Type+" certificate signed")
@@ -173,7 +173,7 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 	cert, err := x509.ParseCertificate(certBytes)
 	if err != nil {
 		logger.Error("signCertificate", err.Error())
-		return nil, NewCertError("parse certificate", err)
+		return nil, err
 	}
 
 	logger.Info("signCertificate", fmt.Sprintf("%s certificate for CN=%s (Org=%s), valid from %s to %s",
