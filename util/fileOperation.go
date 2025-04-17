@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -16,7 +17,7 @@ func FileExists(filePath string) bool {
 func FileWrite(filePath string, data []byte, code fs.FileMode) error {
 	err := os.WriteFile(filePath, data, code)
 	if err != nil {
-		logger.Error("FileWrite", filePath+", "+err.Error())
+		logger.Error("FileWrite", fmt.Sprintf("%s, file path: %s", err.Error(), filePath))
 	}
 	return err
 }
@@ -24,7 +25,7 @@ func FileWrite(filePath string, data []byte, code fs.FileMode) error {
 func FileDelete(filePath string) error {
 	err := os.Remove(filePath)
 	if err != nil {
-		logger.Error("FileDelete", filePath+", "+err.Error())
+		logger.Error("FileDelete", fmt.Sprintf("%s, file path: %s", err.Error(), filePath))
 	}
 	return err
 }
@@ -36,7 +37,7 @@ func FileDir(filePath string) string {
 func FileDirCreate(filePath string) error {
 	err := os.MkdirAll(filepath.Dir(filePath), 0775)
 	if err != nil {
-		logger.Error("FileDirCreate", filePath+", "+err.Error())
+		logger.Error("FileDirCreate", fmt.Sprintf("%s, file path: %s", err.Error(), filePath))
 	}
 	return err
 }
