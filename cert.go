@@ -17,16 +17,6 @@ import (
 	logger "github.com/Alonza0314/logger-go"
 )
 
-// CertificateType represents the type of certificate
-type CertificateType string
-
-const (
-	CertTypeRoot         CertificateType = "root"
-	CertTypeIntermediate CertificateType = "intermediate"
-	CertTypeServer       CertificateType = "server"
-	CertTypeClient       CertificateType = "client"
-)
-
 func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
@@ -85,7 +75,7 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 
 	var certBytes []byte
 
-	if cfg.Type == string(CertTypeRoot) {
+	if cfg.Type == string(CERT_TYPE_ROOT) {
 		// root certificate self-signed
 		if !util.FileExists(cfg.KeyFilePath) {
 			logger.Warn("signCertificate", "private key does not exist")
@@ -186,50 +176,70 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 	return cert, nil
 }
 
-func SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+func SignCertificate(certType CertType, yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
-	cert, err := signCertificate(cfg.CA.Root, overwrite)
-	if err != nil {
-		return nil, err
+
+	switch certType {
+	case CERT_TYPE_ROOT:
+		return signCertificate(cfg.CA.Root, overwrite)
+	case CERT_TYPE_INTERMEDIATE:
+		return signCertificate(cfg.CA.Intermediate, overwrite)
+	case CERT_TYPE_SERVER:
+		return signCertificate(cfg.CA.Server, overwrite)
+	case CERT_TYPE_CLIENT:
+		return signCertificate(cfg.CA.Client, overwrite)
 	}
-	return cert, nil
+
+	return nil, errors.New("invalid certificate type")
 }
 
-func SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
-	var cfg model.CAConfig
-	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
-		return nil, err
-	}
-	cert, err := signCertificate(cfg.CA.Intermediate, overwrite)
-	if err != nil {
-		return nil, err
-	}
-	return cert, nil
-}
+// func SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+// 	var cfg model.CAConfig
+// 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+// 		return nil, err
+// 	}
+// 	cert, err := signCertificate(cfg.CA.Root, overwrite)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return cert, nil
+// }
 
-func SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
-	var cfg model.CAConfig
-	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
-		return nil, err
-	}
-	cert, err := signCertificate(cfg.CA.Server, overwrite)
-	if err != nil {
-		return nil, err
-	}
-	return cert, nil
-}
+// func SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+// 	var cfg model.CAConfig
+// 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+// 		return nil, err
+// 	}
+// 	cert, err := signCertificate(cfg.CA.Intermediate, overwrite)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return cert, nil
+// }
 
-func SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
-	var cfg model.CAConfig
-	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
-		return nil, err
-	}
-	cert, err := signCertificate(cfg.CA.Client, overwrite)
-	if err != nil {
-		return nil, err
-	}
-	return cert, nil
-}
+// func SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+// 	var cfg model.CAConfig
+// 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+// 		return nil, err
+// 	}
+// 	cert, err := signCertificate(cfg.CA.Server, overwrite)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return cert, nil
+// }
+
+// func SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error) {
+// 	var cfg model.CAConfig
+// 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+// 		return nil, err
+// 	}
+// 	cert, err := signCertificate(cfg.CA.Client, overwrite)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return cert, nil
+// }
