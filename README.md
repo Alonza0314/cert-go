@@ -1,24 +1,24 @@
 # cert-go
 
-This package is a golang command line tool implementation of self-signing certificates.
+This package is a Golang command-line tool implementation of self-signing certificates.
 
-Also, we expected to link third party CA certificates to generate certificates in the future.
+Also, we plan to link third-party CA certificates to generate certificates in the future.
 
-## Develop Environment
+## Development Environment
 
-|Type|Version|
-|-|-|
-|OS|ubuntu 22.04.5|
-|Golang|go1.22.5 linux/amd64|
+| Type   | Version              |
+| ------ | -------------------- |
+| OS     | Ubuntu 22.04.5       |
+| Golang | go1.22.5 linux/amd64 |
 
 ## Usage
 
 > [!NOTE]
-> If the target file (certificate, csr, private key) is existed, the function will not create it and directly return an error, cert/csr/private key already exists. Or you can use the `overwrite` argument to overwrite the existing file.
+> If the target file (certificate, CSR, private key) already exists, the function will not create it and directly return an error: cert/CSR/private key already exists. Or you can use the `overwrite` argument to overwrite the existing file.
 
 1. Prepare the destination directory for the private key, certificate, and CSR. This step is required for all the following steps.
 
-2. Modify the `cfg.yml` file to set the appropriate values(you can use the `defaultCfg.yml` file as your template).
+2. Modify the `cfg.yml` file to set the appropriate values (you can use the `defaultCfg.yml` file as your template).
 
    [Click here to see the default configuration file](./defaultCfg.yml)
 
@@ -28,7 +28,7 @@ Also, we expected to link third party CA certificates to generate certificates i
     import "github.com/Alonza0314/cert-go"
     ```
 
-4. For create private key, you need to specify the path of the destination file. Then, use this function:
+4. To create private key, you need to specify the path of the destination file. Then, use this function:
 
     ```go
     CreatePrivateKey(keyPath string, overwrite bool) (*ecdsa.PrivateKey, error)
@@ -36,7 +36,7 @@ Also, we expected to link third party CA certificates to generate certificates i
 
     The return value is the private key in `*ecdsa.PrivateKey` type.
 
-5. For create csr, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the certificate structure.
+5. To create CSR, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the certificate structure.
 
     ```go
     util.ReadYamlFileToStruct(yamlPath string, v interface{}) error
@@ -48,12 +48,12 @@ Also, we expected to link third party CA certificates to generate certificates i
     CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest, error)
     ```
 
-    The return value is the csr in `*x509.CertificateRequest` type.
+    The return value is the CSR in `*x509.CertificateRequest` type.
 
     NOTICE:
-    - If the private key is not existed, the function will automatically create one in default.
+    - If the private key does not exist, the function will automatically create one in default.
 
-6. For sign certificate, you need to specify the yaml file path of the CA configuration. Then, use these functions for different types of certificates:
+6. To sign certificate, you need to specify the YAML file path of the CA configuration. Then, use these functions for different types of certificates:
 
     ```go
     SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
@@ -65,10 +65,10 @@ Also, we expected to link third party CA certificates to generate certificates i
     The return value is the signed certificate in `*x509.Certificate` type.
 
     NOTICE:
-    - If the private key is not existed, the function will automatically create one in default.
-    - If the csr is not existed, the function will automatically create one in default.
+    - If the private key does not exist, the function will automatically create one in default.
+    - If the CSR does not exist, the function will automatically create one in default.
 
-7. In the end, it is expected to see the private key, certificate, and csr in the destination directory.
+7. In the end, the private key, certificate, and CSR are expected to be in the destination directory.
 
 ## Example
 
@@ -80,7 +80,7 @@ Also, we expected to link third party CA certificates to generate certificates i
 go test ./... -v
 ```
 
-## Command Line Tool
+## Command-Line Tool
 
 ### Build by Yourself(in root directory)
 
