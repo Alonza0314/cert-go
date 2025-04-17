@@ -49,7 +49,7 @@ func createCsr(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if csrType != "intermediate" && csrType != "server" && csrType != "client" {
+	if csrType != string(certgo.CERT_TYPE_INTERMEDIATE) && csrType != string(certgo.CERT_TYPE_SERVER) && csrType != string(certgo.CERT_TYPE_CLIENT) {
 		logger.Error("cert-go", "invalid csr type, please specify the type of the certificate: [intermediate, server, client]")
 		return
 	}
@@ -60,12 +60,12 @@ func createCsr(cmd *cobra.Command, args []string) {
 		logger.Error("cert-go", "failed to create csr")
 		return
 	}
-	switch csrType {
-	case "intermediate":
+	switch certgo.CertType(csrType) {
+	case certgo.CERT_TYPE_INTERMEDIATE:
 		_, err = certgo.CreateCsr(cfg.CA.Intermediate, force)
-	case "server":
+	case certgo.CERT_TYPE_SERVER:
 		_, err = certgo.CreateCsr(cfg.CA.Server, force)
-	case "client":
+	case certgo.CERT_TYPE_CLIENT:
 		_, err = certgo.CreateCsr(cfg.CA.Client, force)
 	}
 	if err != nil {

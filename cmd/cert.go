@@ -47,21 +47,21 @@ func createCert(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if certType != "root" && certType != "intermediate" && certType != "server" && certType != "client" {
+	if certType != string(certgo.CERT_TYPE_ROOT) && certType != string(certgo.CERT_TYPE_INTERMEDIATE) && certType != string(certgo.CERT_TYPE_SERVER) && certType != string(certgo.CERT_TYPE_CLIENT) {
 		logger.Error("cert-go", "invalid cert type, please specify the type of the certificate: [root, intermediate, server, client]")
 		return
 	}
 
 	logger.Info("cert-go", "start to create cert")
-	switch certType {
-	case "root":
-		_, err = certgo.SignRootCertificate(yamlPath, force)
-	case "intermediate":
-		_, err = certgo.SignIntermediateCertificate(yamlPath, force)
-	case "server":
-		_, err = certgo.SignServerCertificate(yamlPath, force)
-	case "client":
-		_, err = certgo.SignClientCertificate(yamlPath, force)
+	switch certgo.CertType(certType) {
+	case certgo.CERT_TYPE_ROOT:
+		_, err = certgo.SignCertificate(certgo.CERT_TYPE_ROOT, yamlPath, force)
+	case certgo.CERT_TYPE_INTERMEDIATE:
+		_, err = certgo.SignCertificate(certgo.CERT_TYPE_INTERMEDIATE, yamlPath, force)
+	case certgo.CERT_TYPE_SERVER:
+		_, err = certgo.SignCertificate(certgo.CERT_TYPE_SERVER, yamlPath, force)
+	case certgo.CERT_TYPE_CLIENT:
+		_, err = certgo.SignCertificate(certgo.CERT_TYPE_CLIENT, yamlPath, force)
 	}
 	if err != nil {
 		if strings.Contains(err.Error(), "already exists") {

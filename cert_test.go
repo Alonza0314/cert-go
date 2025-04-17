@@ -109,34 +109,34 @@ func TestSignCertificate(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
 			case "root without exist", "root with exist and no force", "root with exist and force":
-				testCase.expect, err = SignRootCertificate(testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(CERT_TYPE_ROOT, testCase.yamlPath, testCase.force)
 			case "intermediate without exist", "intermediate with exist and no force", "intermediate with exist and force":
-				testCase.expect, err = SignIntermediateCertificate(testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(CERT_TYPE_INTERMEDIATE, testCase.yamlPath, testCase.force)
 			case "server without exist", "server with exist and no force", "server with exist and force":
-				testCase.expect, err = SignServerCertificate(testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(CERT_TYPE_SERVER, testCase.yamlPath, testCase.force)
 			case "client without exist", "client with exist and no force", "client with exist and force":
-				testCase.expect, err = SignClientCertificate(testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(CERT_TYPE_CLIENT, testCase.yamlPath, testCase.force)
 			}
-			if testCase.exist && !testCase.force{
+			if testCase.exist && !testCase.force {
 				if err == nil || err.Error() != "certificate already exists" {
-					t.Fatalf("TestSignCertificate (%s): expected error for existing certificate without force", testCase.name)	
+					t.Fatalf("TestSignCertificate (%s): expected error for existing certificate without force", testCase.name)
 				}
 			} else {
 				if err != nil {
-					t.Fatalf("TestSignRootCertificate: %v", err)
+					t.Fatalf("TestSignCertificate: %v", err)
 				}
 				if testCase.expect == nil {
-					t.Fatalf("TestSignRootCertificate: certificate is nil")
+					t.Fatalf("TestSignCertificate: certificate is nil")
 				}
 				readCert, err := util.ReadCertificate(testCase.certPath)
 				if err != nil {
-					t.Fatalf("TestSignRootCertificate: %v", err)
+					t.Fatalf("TestSignCertificate: %v", err)
 				}
 				if readCert == nil {
-					t.Fatalf("TestSignRootCertificate: read certificate is nil")
+					t.Fatalf("TestSignCertificate: read certificate is nil")
 				}
 				if !reflect.DeepEqual(testCase.expect, readCert) {
-					t.Fatalf("TestSignRootCertificate: certificate is not equal")
+					t.Fatalf("TestSignCertificate: certificate is not equal")
 				}
 			}
 		})

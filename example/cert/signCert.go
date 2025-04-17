@@ -7,13 +7,12 @@ import (
 
 var signCertYmlPath = "./signCertCfg.yml"
 
-
 func main() {
-	logger.Info("SignRootCertificate", "signing root certificate")
+	logger.Info("SignCertificate", "signing root certificate")
 
-	if _, err := certgo.SignRootCertificate(signCertYmlPath, true); err != nil {
+	if _, err := certgo.SignCertificate(certgo.CERT_TYPE_ROOT, signCertYmlPath, true); err != nil {
 		return
 	}
 
-	logger.Info("SignRootCertificate", "root certificate signed, you can see the root certificate in ./root_cert.pem")
+	logger.Info("SignCertificate", "root certificate signed, you can see the certificate in ./root_cert.pem")
 }
