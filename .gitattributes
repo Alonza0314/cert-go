@@ -1,0 +1,2 @@
+# force all text files to check out as CRLF
+* text eol=crlf

@@ -43,3 +43,13 @@ Flags:
   -t, --type string   specify the type of the certificate: [root, intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path
 ```
+
+## bundle-chain
+
+Concatenate your intermediate and root certificates into a single PEM bundle.
+
+**Usage:**
+
+```bash
+cert-go create bundle-chain [flags]
+
