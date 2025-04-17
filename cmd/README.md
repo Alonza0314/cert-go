@@ -43,3 +43,18 @@ Flags:
   -t, --type string   specify the type of the certificate: [root, intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path
 ```
+## Additional Notes
+
+- 🔐 **Root CSR Not Generated:**  
+  When generating a root certificate (`type: root`), even if a `csr:` field is specified in the YAML file, the CSR file will **not** be saved to disk. This is by design, as root certificates are typically self-signed and do not require a CSR for issuance.
+
+- 📝 **CSR Output for Other Types:**  
+  For all other types (`intermediate`, `server`, `client`), if a `csr:` field is specified, `cert-go` will generate and persist a CSR to the given path. This CSR can be reused in other systems or for manual inspection.
+
+- 🧪 **Verifying the Chain:**  
+  After generating certificates, you can use `openssl` to verify the validity of the certificate chain manually:
+
+  ```bash
+  openssl verify -CAfile root/root.cert.pem \
+                 -untrusted intermediate/intermediate.cert.pem \
+                 server/server.cert.pem
