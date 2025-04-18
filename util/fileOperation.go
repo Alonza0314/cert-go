@@ -37,7 +37,7 @@ func FileDir(filePath string) string {
 func FileDirCreate(filePath string) error {
 	err := os.MkdirAll(filepath.Dir(filePath), 0775)
 	if err != nil {
-		logger.Error("FileDirCreate", fmt.Sprintf("%s, file path: %s", err.Error(), filePath))
+		logger.Error("FileDirCreate", fmt.Sprintf("%s, file directory path: %s", err.Error(), filepath.Dir(filePath)))
 	}
 	return err
 }
