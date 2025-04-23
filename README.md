@@ -2,14 +2,22 @@
 
 This package is a Golang command-line tool implementation of self-signing certificates.
 
-Also, we plan to link third-party CA certificates to generate certificates in the future.
+- [cert-go](#cert-go)
+  - [Development Environment](#development-environment)
+  - [Usage](#usage)
+  - [Example](#example)
+  - [Command-Line Tool](#command-line-tool)
+    - [Build by Yourself(in root directory)](#build-by-yourselfin-root-directory)
+    - [Use Directly](#use-directly)
+    - [Command Line Tool Usage](#command-line-tool-usage)
+  - [About Me](#about-me)
 
 ## Development Environment
 
-|Type|Version|
-|-|-|
-|OS|Ubuntu 22.04.5|
-|Golang|go1.22.5 linux/amd64|
+| Type | Version |
+| - | - |
+| OS | Ubuntu 22.04.5 |
+| Golang | go1.22.5 linux/amd64 |
 
 ## Usage
 
@@ -31,10 +39,11 @@ Also, we plan to link third-party CA certificates to generate certificates in th
 4. To create private key, you need to specify the path of the destination file. Then, use this function:
 
     ```go
-    CreatePrivateKey(keyPath string, overwrite bool) (*ecdsa.PrivateKey, error)
+    CreatePrivateKey(keyPath string, privateKeyType constants.PrivateKeyType, overwrite bool) (interface{}, error)
     ```
 
-    The return value is the private key in `*ecdsa.PrivateKey` type.
+    The return value is the private key in `interface{}` type based on the `privateKeyType` argument.
+    Now, we support `ECDSA` and `RSA` type.
 
 5. To create CSR, you need to specify the [certificate structure](./model/model_certificate.go). You can use `ReadYamlFileToStruct` function to read the configuration file and convert it to the certificate structure.
 
@@ -45,40 +54,34 @@ Also, we plan to link third-party CA certificates to generate certificates in th
     Then, use this function:
 
     ```go
-    CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest, error)
+    CreateCsr(cfg model.Certificate, privateKeyType constants.PrivateKeyType, overwrite bool) (*x509.CertificateRequest, error)
     ```
 
     The return value is the CSR in `*x509.CertificateRequest` type.
 
     NOTICE:
-    - If the private key does not exist, the function will automatically create one in default.
+    - If the private key does not exist, the function will automatically create one in default based on the `privateKeyType` argument.
 
 6. To sign certificate, you need to specify the YAML file path of the CA configuration. Then, use these functions for different types of certificates:
 
     ```go
-    SignRootCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
-    SignIntermediateCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
-    SignServerCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
-    SignClientCertificate(yamlPath string, overwrite bool) (*x509.Certificate, error)
+    SignRootCertificate(yamlPath string, privateKeyType constants.PrivateKeyType, overwrite bool) (*x509.Certificate, error)
+    SignIntermediateCertificate(yamlPath string, privateKeyType constants.PrivateKeyType, overwrite bool) (*x509.Certificate, error)
+    SignServerCertificate(yamlPath string, privateKeyType constants.PrivateKeyType, overwrite bool) (*x509.Certificate, error)
+    SignClientCertificate(yamlPath string, privateKeyType constants.PrivateKeyType, overwrite bool) (*x509.Certificate, error)
     ```
 
     The return value is the signed certificate in `*x509.Certificate` type.
 
     NOTICE:
-    - If the private key does not exist, the function will automatically create one in default.
-    - If the CSR does not exist, the function will automatically create one in default.
+    - If the private key does not exist, the function will automatically create one in default based on the `privateKeyType` argument.
+    - If the CSR does not exist, the function will automatically create one in default based on the `privateKeyType` argument.
 
 7. In the end, the private key, certificate, and CSR are expected to be in the destination directory.
 
 ## Example
 
 [Click here to see the example](./example/)
-
-## Test
-
-```bash
-go test ./... -v
-```
 
 ## Command-Line Tool
 
