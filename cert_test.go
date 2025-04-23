@@ -10,7 +10,7 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-var testCaseCert = []struct {
+var testCaseCreateCert = []struct {
 	name     string
 	yamlPath string
 	certPath string
@@ -106,7 +106,7 @@ var testCaseCert = []struct {
 
 func TestSignCertificateECDSA(t *testing.T) {
 	var err error
-	for _, testCase := range testCaseCert {
+	for _, testCase := range testCaseCreateCert {
 		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
 			case "root without exist", "root with exist and no force", "root with exist and force":
@@ -142,7 +142,7 @@ func TestSignCertificateECDSA(t *testing.T) {
 			}
 		})
 	}
-	for _, testCase := range testCaseCert {
+	for _, testCase := range testCaseCreateCert {
 		if !testCase.exist {
 			var cfg model.CAConfig
 			if err := util.ReadYamlFileToStruct(testCase.yamlPath, &cfg); err != nil {
@@ -193,7 +193,7 @@ func TestSignCertificateECDSA(t *testing.T) {
 
 func TestSignCertificateRSA(t *testing.T) {
 	var err error
-	for _, testCase := range testCaseCert {
+	for _, testCase := range testCaseCreateCert {
 		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
 			case "root without exist", "root with exist and no force", "root with exist and force":
@@ -229,7 +229,7 @@ func TestSignCertificateRSA(t *testing.T) {
 			}
 		})
 	}
-	for _, testCase := range testCaseCert {
+	for _, testCase := range testCaseCreateCert {
 		if !testCase.exist {
 			var cfg model.CAConfig
 			if err := util.ReadYamlFileToStruct(testCase.yamlPath, &cfg); err != nil {
@@ -275,5 +275,56 @@ func TestSignCertificateRSA(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+var testCaseCreateCertKeyTypeUnderRSA = []struct {
+	name string
+	cfg model.Certificate
+	keyType constants.PrivateKeyType
+	errFlag bool
+}{
+	{
+		name: "test with ecdsa key type",
+		keyType: constants.PRIVATE_KEY_TYPE_ECDSA,
+		errFlag: true,
+	},
+	{
+		name: "test with rsa key type",
+		keyType: constants.PRIVATE_KEY_TYPE_RSA,
+		errFlag: false,
+	},
+}
+
+func TestCreateCertKeyTypeUnderRSA(t *testing.T) {
+	yamlPath := "./defaultCfg.yml"
+	cfg := model.CAConfig{}
+	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
+		t.Fatalf("TestCreateCertKeyTypeUnderRSA: %v", err)
+	}
+	
+	if _, err := CreatePrivateKey(cfg.CA.Root.KeyFilePath, constants.PRIVATE_KEY_TYPE_RSA, false); err != nil {
+		t.Fatalf("TestCreateCertKeyTypeUnderRSA: %v", err)
+	}
+
+	for _, testCase := range testCaseCreateCertKeyTypeUnderRSA {
+		t.Run(testCase.name, func(t *testing.T) {
+			_, err := SignCertificate(constants.CERT_TYPE_ROOT, testCase.keyType, yamlPath, false)
+			if testCase.errFlag {
+				if err == nil {
+					t.Fatalf("TestCreateCertKeyTypeUnderRSA (%s): error should be raised", testCase.name)
+				}
+				if err.Error() != "private key type: RSA is not same as the specified key type: ECDSA" {
+					t.Fatalf("TestCreateCertKeyTypeUnderRSA (%s): error should be 'private key type: RSA is not same as the specified key type: ECDSA' but got '%s'", testCase.name, err.Error())
+				}
+			}
+		})
+	}
+
+	if err := util.FileDelete(cfg.CA.Root.KeyFilePath); err != nil {
+		t.Fatalf("TestCreateCertKeyTypeUnderRSA: %v", err)
+	}
+	if err := util.FileDelete(cfg.CA.Root.CertFilePath); err != nil {
+		t.Fatalf("TestCreateCertKeyTypeUnderRSA: %v", err)
 	}
 }
