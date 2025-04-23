@@ -1,7 +1,6 @@
 package certgo
 
 import (
-	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -9,12 +8,13 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/Alonza0314/cert-go/constants"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest, error) {
+func CreateCsr(cfg model.Certificate, keyType constants.PrivateKeyType, overwrite bool) (*x509.CertificateRequest, error) {
 	logger.Info("CreateCsr", "creating csr")
 
 	// check csr exists
@@ -30,13 +30,13 @@ func CreateCsr(cfg model.Certificate, overwrite bool) (*x509.CertificateRequest,
 		}
 	}
 
-	var privateKey *ecdsa.PrivateKey
+	var privateKey interface{}
 	var err error
 
 	// check private key exists
 	if !util.FileExists(cfg.KeyFilePath) {
 		logger.Warn("CreateCsr", "private key does not exist")
-		privateKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
+		privateKey, err = CreatePrivateKey(cfg.KeyFilePath, keyType, overwrite)
 		if err != nil {
 			return nil, err
 		}
