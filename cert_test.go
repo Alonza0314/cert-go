@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/Alonza0314/cert-go/constants"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
 )
@@ -103,40 +104,40 @@ var testCaseCert = []struct {
 	},
 }
 
-func TestSignCertificate(t *testing.T) {
+func TestSignCertificateECDSA(t *testing.T) {
 	var err error
 	for _, testCase := range testCaseCert {
 		t.Run(testCase.name, func(t *testing.T) {
 			switch testCase.name {
 			case "root without exist", "root with exist and no force", "root with exist and force":
-				testCase.expect, err = SignCertificate(CERT_TYPE_ROOT, testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_ROOT, constants.PRIVATE_KEY_TYPE_ECDSA, testCase.yamlPath, testCase.force)
 			case "intermediate without exist", "intermediate with exist and no force", "intermediate with exist and force":
-				testCase.expect, err = SignCertificate(CERT_TYPE_INTERMEDIATE, testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_INTERMEDIATE, constants.PRIVATE_KEY_TYPE_ECDSA, testCase.yamlPath, testCase.force)
 			case "server without exist", "server with exist and no force", "server with exist and force":
-				testCase.expect, err = SignCertificate(CERT_TYPE_SERVER, testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_SERVER, constants.PRIVATE_KEY_TYPE_ECDSA, testCase.yamlPath, testCase.force)
 			case "client without exist", "client with exist and no force", "client with exist and force":
-				testCase.expect, err = SignCertificate(CERT_TYPE_CLIENT, testCase.yamlPath, testCase.force)
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_CLIENT, constants.PRIVATE_KEY_TYPE_ECDSA, testCase.yamlPath, testCase.force)
 			}
 			if testCase.exist && !testCase.force {
 				if err == nil || err.Error() != "certificate already exists" {
-					t.Fatalf("TestSignCertificate (%s): expected error for existing certificate without force", testCase.name)
+					t.Fatalf("TestSignCertificateECDSA (%s): expected error for existing certificate without force", testCase.name)
 				}
 			} else {
 				if err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if testCase.expect == nil {
-					t.Fatalf("TestSignCertificate: certificate is nil")
+					t.Fatalf("TestSignCertificateECDSA: certificate is nil")
 				}
 				readCert, err := util.ReadCertificate(testCase.certPath)
 				if err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if readCert == nil {
-					t.Fatalf("TestSignCertificate: read certificate is nil")
+					t.Fatalf("TestSignCertificateECDSA: read certificate is nil")
 				}
 				if !reflect.DeepEqual(testCase.expect, readCert) {
-					t.Fatalf("TestSignCertificate: certificate is not equal")
+					t.Fatalf("TestSignCertificateECDSA: certificate is not equal")
 				}
 			}
 		})
@@ -145,45 +146,132 @@ func TestSignCertificate(t *testing.T) {
 		if !testCase.exist {
 			var cfg model.CAConfig
 			if err := util.ReadYamlFileToStruct(testCase.yamlPath, &cfg); err != nil {
-				t.Fatalf("TestSignCertificate: %v", err)
+				t.Fatalf("TestSignCertificateECDSA: %v", err)
 			}
 			switch testCase.name {
 			case "root without exist":
 				if err := util.FileDelete(cfg.CA.Root.CertFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Root.KeyFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 			case "intermediate without exist":
 				if err := util.FileDelete(cfg.CA.Intermediate.CertFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Intermediate.CsrFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Intermediate.KeyFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 			case "server without exist":
 				if err := util.FileDelete(cfg.CA.Server.CertFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Server.CsrFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Server.KeyFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 			case "client without exist":
 				if err := util.FileDelete(cfg.CA.Client.CertFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Client.CsrFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
 				}
 				if err := util.FileDelete(cfg.CA.Client.KeyFilePath); err != nil {
-					t.Fatalf("TestSignCertificate: %v", err)
+					t.Fatalf("TestSignCertificateECDSA: %v", err)
+				}
+			}
+		}
+	}
+}
+
+func TestSignCertificateRSA(t *testing.T) {
+	var err error
+	for _, testCase := range testCaseCert {
+		t.Run(testCase.name, func(t *testing.T) {
+			switch testCase.name {
+			case "root without exist", "root with exist and no force", "root with exist and force":
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_ROOT, constants.PRIVATE_KEY_TYPE_RSA, testCase.yamlPath, testCase.force)
+			case "intermediate without exist", "intermediate with exist and no force", "intermediate with exist and force":
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_INTERMEDIATE, constants.PRIVATE_KEY_TYPE_RSA, testCase.yamlPath, testCase.force)
+			case "server without exist", "server with exist and no force", "server with exist and force":
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_SERVER, constants.PRIVATE_KEY_TYPE_RSA, testCase.yamlPath, testCase.force)
+			case "client without exist", "client with exist and no force", "client with exist and force":
+				testCase.expect, err = SignCertificate(constants.CERT_TYPE_CLIENT, constants.PRIVATE_KEY_TYPE_RSA, testCase.yamlPath, testCase.force)
+			}
+			if testCase.exist && !testCase.force {
+				if err == nil || err.Error() != "certificate already exists" {
+					t.Fatalf("TestSignCertificateRSA (%s): expected error for existing certificate without force", testCase.name)
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if testCase.expect == nil {
+					t.Fatalf("TestSignCertificateRSA: certificate is nil")
+				}
+				readCert, err := util.ReadCertificate(testCase.certPath)
+				if err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if readCert == nil {
+					t.Fatalf("TestSignCertificateRSA: read certificate is nil")
+				}
+				if !reflect.DeepEqual(testCase.expect, readCert) {
+					t.Fatalf("TestSignCertificateRSA: certificate is not equal")
+				}
+			}
+		})
+	}
+	for _, testCase := range testCaseCert {
+		if !testCase.exist {
+			var cfg model.CAConfig
+			if err := util.ReadYamlFileToStruct(testCase.yamlPath, &cfg); err != nil {
+				t.Fatalf("TestSignCertificateRSA: %v", err)
+			}
+			switch testCase.name {
+			case "root without exist":
+				if err := util.FileDelete(cfg.CA.Root.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Root.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+			case "intermediate without exist":
+				if err := util.FileDelete(cfg.CA.Intermediate.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Intermediate.CsrFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Intermediate.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+			case "server without exist":
+				if err := util.FileDelete(cfg.CA.Server.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Server.CsrFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Server.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+			case "client without exist":
+				if err := util.FileDelete(cfg.CA.Client.CertFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Client.CsrFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
+				}
+				if err := util.FileDelete(cfg.CA.Client.KeyFilePath); err != nil {
+					t.Fatalf("TestSignCertificateRSA: %v", err)
 				}
 			}
 		}
