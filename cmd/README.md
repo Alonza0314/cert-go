@@ -11,6 +11,7 @@ Usage:
 Flags:
   -f, --force        overwrite the private key if it already exists
   -h, --help         help for private-key
+  -k, --key string   specify the type of the private key, <ecdsa> or <rsa>
   -o, --out string   specify the output path of the private key
 ```
 
@@ -25,6 +26,7 @@ Usage:
 Flags:
   -f, --force         overwrite the csr if it already exists
   -h, --help          help for csr
+  -k, --key string    specify the type of the private key, <ecdsa> or <rsa>
   -t, --type string   specify the type of the certificate: [intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path
 ```
@@ -40,6 +42,7 @@ Usage:
 Flags:
   -f, --force         overwrite the certificate if it already exists
   -h, --help          help for cert
+  -k, --key string    specify the type of the private key, <ecdsa> or <rsa>
   -t, --type string   specify the type of the certificate: [root, intermediate, server, client]
   -y, --yaml string   specify the configuration yaml file path
 ```

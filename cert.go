@@ -1,7 +1,9 @@
 package certgo
 
 import (
+	"crypto/ecdsa"
 	"crypto/rand"
+	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
@@ -12,12 +14,13 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/Alonza0314/cert-go/constants"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, error) {
+func signCertificate(cfg model.Certificate, keyType constants.PrivateKeyType, overwrite bool) (*x509.Certificate, error) {
 	logger.Info("signCertificate", "signing certificate")
 
 	// check if certificate exists
@@ -75,23 +78,40 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 
 	var certBytes []byte
 
-	if cfg.Type == string(CERT_TYPE_ROOT) {
+	if cfg.Type == string(constants.CERT_TYPE_ROOT) {
 		// root certificate self-signed
+		var parentKey interface{}
 		if !util.FileExists(cfg.KeyFilePath) {
 			logger.Warn("signCertificate", "private key does not exist")
-			cfg.ParentKey, err = CreatePrivateKey(cfg.KeyFilePath, overwrite)
+			parentKey, err = CreatePrivateKey(cfg.KeyFilePath, keyType, overwrite)
 			if err != nil {
 				return nil, err
 			}
 		}
 		if cfg.ParentKey == nil {
-			cfg.ParentKey, err = util.ReadPrivateKey(cfg.KeyFilePath)
+			parentKey, err = util.ReadPrivateKey(cfg.KeyFilePath)
 			if err != nil {
 				return nil, err
 			}
 		}
 
-		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, &cfg.ParentKey.PublicKey, cfg.ParentKey)
+		// check private key type is same as the key type
+		if _, err := util.IsPrivateKeyTypeSame(parentKey, keyType); err != nil {
+			logger.Error("signCertificate", err.Error())
+			return nil, err
+		}
+
+		var publicKey interface{}
+		switch keyType {
+		case constants.PRIVATE_KEY_TYPE_ECDSA:
+			cfg.ParentKey = parentKey.(*ecdsa.PrivateKey)
+			publicKey = &cfg.ParentKey.(*ecdsa.PrivateKey).PublicKey
+		case constants.PRIVATE_KEY_TYPE_RSA:
+			cfg.ParentKey = parentKey.(*rsa.PrivateKey)
+			publicKey = &cfg.ParentKey.(*rsa.PrivateKey).PublicKey
+		}
+
+		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, publicKey, cfg.ParentKey)
 		if err != nil {
 			logger.Error("signCertificate", err.Error())
 			return nil, err
@@ -101,7 +121,7 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 		var csr *x509.CertificateRequest
 		if !util.FileExists(cfg.CsrFilePath) {
 			logger.Warn("signCertificate", "CSR file does not exist")
-			csr, err = CreateCsr(cfg, overwrite)
+			csr, err = CreateCsr(cfg, keyType, overwrite)
 			if err != nil {
 				return nil, err
 			}
@@ -176,21 +196,21 @@ func signCertificate(cfg model.Certificate, overwrite bool) (*x509.Certificate, 
 	return cert, nil
 }
 
-func SignCertificate(certType CertType, yamlPath string, overwrite bool) (*x509.Certificate, error) {
+func SignCertificate(certType constants.CertType, keyType constants.PrivateKeyType, yamlPath string, overwrite bool) (*x509.Certificate, error) {
 	var cfg model.CAConfig
 	if err := util.ReadYamlFileToStruct(yamlPath, &cfg); err != nil {
 		return nil, err
 	}
 
 	switch certType {
-	case CERT_TYPE_ROOT:
-		return signCertificate(cfg.CA.Root, overwrite)
-	case CERT_TYPE_INTERMEDIATE:
-		return signCertificate(cfg.CA.Intermediate, overwrite)
-	case CERT_TYPE_SERVER:
-		return signCertificate(cfg.CA.Server, overwrite)
-	case CERT_TYPE_CLIENT:
-		return signCertificate(cfg.CA.Client, overwrite)
+	case constants.CERT_TYPE_ROOT:
+		return signCertificate(cfg.CA.Root, keyType, overwrite)
+	case constants.CERT_TYPE_INTERMEDIATE:
+		return signCertificate(cfg.CA.Intermediate, keyType, overwrite)
+	case constants.CERT_TYPE_SERVER:
+		return signCertificate(cfg.CA.Server, keyType, overwrite)
+	case constants.CERT_TYPE_CLIENT:
+		return signCertificate(cfg.CA.Client, keyType, overwrite)
 	}
 
 	return nil, errors.New("invalid certificate type")

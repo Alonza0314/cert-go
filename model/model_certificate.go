@@ -1,7 +1,6 @@
 package model
 
 import (
-	"crypto/ecdsa"
 	"crypto/x509"
 )
 
@@ -14,7 +13,7 @@ type Certificate struct {
 	ParentCertPath string `yaml:"parent_cert"`
 	ParentKeyPath  string `yaml:"parent_key"`
 	ParentCert     *x509.Certificate
-	ParentKey      *ecdsa.PrivateKey
+	ParentKey      interface{}
 
 	IsCA          bool   `yaml:"is_ca"`
 	Organization  string `yaml:"organization"`
@@ -28,5 +27,4 @@ type Certificate struct {
 	DNSNames    []string `yaml:"dns_names"`
 	IPAddresses []string `yaml:"ip_addresses"`
 	URIs        []string `yaml:"uris"`
-
 }

@@ -4,16 +4,18 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
 	"fmt"
 
+	"github.com/Alonza0314/cert-go/constants"
 	"github.com/Alonza0314/cert-go/util"
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func CreatePrivateKey(keyPath string, overwrite bool) (*ecdsa.PrivateKey, error) {
+func CreatePrivateKey(keyPath string, keyType constants.PrivateKeyType, overwrite bool) (interface{}, error) {
 	logger.Info("CreatePrivateKey", "creating private key")
 
 	// check if private key exists
@@ -29,21 +31,43 @@ func CreatePrivateKey(keyPath string, overwrite bool) (*ecdsa.PrivateKey, error)
 		}
 	}
 
+	var privateKey interface{}
+	var keyBytes []byte
+
 	// generate private key
-	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	if err != nil {
-		logger.Error("CreatePrivateKey", err.Error())
-		return nil, err
+	switch keyType {
+	case constants.PRIVATE_KEY_TYPE_ECDSA:
+		logger.Info("CreatePrivateKey", "generating ECDSA private key")
+		ecdsaKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+		if err != nil {
+			logger.Error("CreatePrivateKey", err.Error())
+			return nil, err
+		}
+		privateKey = ecdsaKey
+
+		keyBytes, err = x509.MarshalECPrivateKey(ecdsaKey)
+		if err != nil {
+			logger.Error("CreatePrivateKey", err.Error())
+			return nil, err
+		}
+
+	case constants.PRIVATE_KEY_TYPE_RSA:
+		logger.Info("CreatePrivateKey", "generating RSA private key")
+		rsaKey, err := rsa.GenerateKey(rand.Reader, constants.PRIVATE_KEY_LENGTH)
+		if err != nil {
+			logger.Error("CreatePrivateKey", err.Error())
+			return nil, err
+		}
+		privateKey = rsaKey
+
+		keyBytes = x509.MarshalPKCS1PrivateKey(rsaKey)
+
+	default:
+		return nil, fmt.Errorf("unsupported key type: %s", keyType)
 	}
 
-	// encode private key
-	keyBytes, err := x509.MarshalECPrivateKey(privateKey)
-	if err != nil {
-		logger.Error("CreatePrivateKey", err.Error())
-		return nil, err
-	}
 	keyPEM := pem.EncodeToMemory(&pem.Block{
-		Type:  "EC PRIVATE KEY",
+		Type:  string(keyType),
 		Bytes: keyBytes,
 	})
 
