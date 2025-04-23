@@ -10,7 +10,7 @@ import (
 	"github.com/Alonza0314/cert-go/util"
 )
 
-var testCaseCsr = []struct {
+var testCaseCreateCsr = []struct {
 	name   string
 	cfg    model.Certificate
 	exist  bool
@@ -48,7 +48,7 @@ var testCaseCsr = []struct {
 
 func TestCreateCsrECDSA(t *testing.T) {
 	var err error
-	for _, testCase := range testCaseCsr {
+	for _, testCase := range testCaseCreateCsr {
 		t.Run(testCase.name, func(t *testing.T) {
 			testCase.expect, err = CreateCsr(testCase.cfg, constants.PRIVATE_KEY_TYPE_ECDSA, testCase.force)
 			if testCase.exist && !testCase.force {
@@ -75,7 +75,7 @@ func TestCreateCsrECDSA(t *testing.T) {
 			}
 		})
 	}
-	for _, testCase := range testCaseCsr {
+	for _, testCase := range testCaseCreateCsr {
 		if !testCase.exist || testCase.force {
 			if util.FileExists(testCase.cfg.KeyFilePath) {
 				if err := util.FileDelete(testCase.cfg.KeyFilePath); err != nil {
@@ -93,7 +93,7 @@ func TestCreateCsrECDSA(t *testing.T) {
 
 func TestCreateCsrRSA(t *testing.T) {
 	var err error
-	for _, testCase := range testCaseCsr {
+	for _, testCase := range testCaseCreateCsr {
 		t.Run(testCase.name, func(t *testing.T) {
 			testCase.expect, err = CreateCsr(testCase.cfg, constants.PRIVATE_KEY_TYPE_RSA, testCase.force)
 			if testCase.exist && !testCase.force {
@@ -120,7 +120,7 @@ func TestCreateCsrRSA(t *testing.T) {
 			}
 		})
 	}
-	for _, testCase := range testCaseCsr {
+	for _, testCase := range testCaseCreateCsr {
 		if !testCase.exist || testCase.force {
 			if util.FileExists(testCase.cfg.KeyFilePath) {
 				if err := util.FileDelete(testCase.cfg.KeyFilePath); err != nil {
@@ -133,5 +133,58 @@ func TestCreateCsrRSA(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+var testCaseCreateCsrKeyTypeUnderRSA = []struct {
+	name string
+	cfg model.Certificate
+	keyType constants.PrivateKeyType
+	errFlag bool
+}{
+	{
+		name: "test with ecdsa key type",
+		keyType: constants.PRIVATE_KEY_TYPE_ECDSA,
+		errFlag: true,
+	},
+	{
+		name: "test with rsa key type",
+		keyType: constants.PRIVATE_KEY_TYPE_RSA,
+		errFlag: false,
+	},
+}
+
+func TestCreateCsrKeyTypeUnderRSA(t *testing.T) {
+	keyPath := "./default_ca/test.key.pem"
+	csrPath := "./default_ca/test.csr.pem"
+
+	cfg := model.Certificate{
+		KeyFilePath: keyPath,
+		CsrFilePath: csrPath,
+	}
+	_, err := CreatePrivateKey(keyPath, constants.PRIVATE_KEY_TYPE_RSA, false)
+	if err != nil {
+		t.Fatalf("TestCreateCsrKeyTypeUnderRSA: failed to create private key: %v", err)
+	}
+
+	for _, testCase := range testCaseCreateCsrKeyTypeUnderRSA {
+		t.Run(testCase.name, func(t *testing.T) {
+			_, err := CreateCsr(cfg, testCase.keyType, false)
+			if testCase.errFlag {
+				if err == nil {
+					t.Fatalf("TestCreateCsrKeyTypeUnderRSA (%s): error should be raised", testCase.name)
+				}
+				if err.Error() != "private key type: RSA is not same as the specified key type: ECDSA" {
+					t.Fatalf("TestCreateCsrKeyTypeUnderRSA (%s): error should be 'private key type: RSA is not same as the specified key type: ECDSA' but got '%s'", testCase.name, err.Error())
+				}
+			}
+		})
+	}
+
+	if err := util.FileDelete(keyPath); err != nil {
+		t.Fatalf("TestCreateCsrKeyTypeUnderRSA: failed to delete key: %v", err)
+	}
+	if err := util.FileDelete(csrPath); err != nil {
+		t.Fatalf("TestCreateCsrKeyTypeUnderRSA: failed to delete csr: %v", err)
 	}
 }

@@ -1,6 +1,8 @@
 package util
 
 import (
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -44,5 +46,16 @@ func ReadPrivateKey(keyPath string) (interface{}, error) {
 	default:
 		logger.Error("ReadPrivateKey", "unsupported private key type: "+block.Type)
 		return nil, fmt.Errorf("unsupported private key type: %s", block.Type)
+	}
+}
+
+func GetPrivateKeyType(privateKey interface{}) constants.PrivateKeyType {
+	switch privateKey.(type) {
+	case *ecdsa.PrivateKey:
+		return constants.PRIVATE_KEY_TYPE_ECDSA
+	case *rsa.PrivateKey:
+		return constants.PRIVATE_KEY_TYPE_RSA
+	default:
+		return constants.PRIVATE_KEY_TYPE_UNKNOWN
 	}
 }
