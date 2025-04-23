@@ -59,3 +59,13 @@ func GetPrivateKeyType(privateKey interface{}) constants.PrivateKeyType {
 		return constants.PRIVATE_KEY_TYPE_UNKNOWN
 	}
 }
+
+func IsPrivateKeyTypeSame(privateKey interface{}, keyType constants.PrivateKeyType) (bool, error) {
+	if GetPrivateKeyType(privateKey) != keyType {
+		if keyType == constants.PRIVATE_KEY_TYPE_RSA {
+			return false, errors.New("private key type: ECDSA is not same as the specified key type: RSA")
+		}
+		return false, errors.New("private key type: RSA is not same as the specified key type: ECDSA")
+	}
+	return true, nil
+}

@@ -96,13 +96,9 @@ func signCertificate(cfg model.Certificate, keyType constants.PrivateKeyType, ov
 		}
 
 		// check private key type is same as the key type
-		if util.GetPrivateKeyType(parentKey) != keyType {
-			if keyType == constants.PRIVATE_KEY_TYPE_RSA {
-				logger.Error("CreateCsr", "private key type: ECDSA is not same as the specified key type: RSA")
-				return nil, errors.New("private key type: ECDSA is not same as the specified key type: RSA")
-			}
-			logger.Error("CreateCsr", "private key type: RSA is not same as the specified key type: ECDSA")
-			return nil, errors.New("private key type: RSA is not same as the specified key type: ECDSA")
+		if _, err := util.IsPrivateKeyTypeSame(parentKey, keyType); err != nil {
+			logger.Error("signCertificate", err.Error())
+			return nil, err
 		}
 
 		var publicKey interface{}
