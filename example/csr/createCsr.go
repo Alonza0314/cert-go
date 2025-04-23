@@ -2,13 +2,13 @@ package main
 
 import (
 	certgo "github.com/Alonza0314/cert-go"
+	"github.com/Alonza0314/cert-go/constants"
 	"github.com/Alonza0314/cert-go/model"
 	"github.com/Alonza0314/cert-go/util"
 	logger "github.com/Alonza0314/logger-go"
 )
 
 var createCsrYmlPath = "./createCsrCfg.yml"
-
 
 func main() {
 	var cfg model.CAConfig
@@ -17,7 +17,7 @@ func main() {
 	}
 
 	logger.Info("CreateCsr", "creating csr")
-	if _, err := certgo.CreateCsr(cfg.CA.Intermediate, true); err != nil {
+	if _, err := certgo.CreateCsr(cfg.CA.Intermediate, constants.PRIVATE_KEY_TYPE_ECDSA, true); err != nil {
 		return
 	}
 
