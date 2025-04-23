@@ -2,8 +2,10 @@ package certgo
 
 import (
 	"crypto/ecdsa"
+	"crypto/rsa"
 	"testing"
 
+	"github.com/Alonza0314/cert-go/constants"
 	"github.com/Alonza0314/cert-go/util"
 )
 
@@ -12,7 +14,7 @@ var testCasePrivateKey = []struct {
 	keyPath string
 	exist   bool
 	force   bool
-	expect  *ecdsa.PrivateKey
+	expect  interface{}
 }{
 	{
 		name:    "test without exist",
@@ -34,27 +36,27 @@ var testCasePrivateKey = []struct {
 	},
 }
 
-func TestCreatePrivateKey(t *testing.T) {
+func TestCreatePrivateKeyECDSA(t *testing.T) {
 	for _, testCase := range testCasePrivateKey {
 		t.Run(testCase.name, func(t *testing.T) {
-			privateKey, err := CreatePrivateKey(testCase.keyPath, testCase.force)
+			privateKey, err := CreatePrivateKey(testCase.keyPath, constants.PRIVATE_KEY_TYPE_ECDSA, testCase.force)
 			if testCase.exist && !testCase.force {
 				if err == nil || err.Error() != "private key already exists" {
-					t.Fatalf("TestCreatePrivateKey: private key should exist")
+					t.Fatalf("TestCreatePrivateKeyECDSA: private key should exist")
 				}
 			} else {
 				if privateKey == nil {
-					t.Fatalf("TestCreatePrivateKey: private key is nil")
+					t.Fatalf("TestCreatePrivateKeyECDSA: private key is nil")
 				}
 				readPrivateKey, err := util.ReadPrivateKey(testCase.keyPath)
 				if err != nil {
-					t.Fatalf("TestCreatePrivateKey: %v", err)
+					t.Fatalf("TestCreatePrivateKeyECDSA: %v", err)
 				}
 				if readPrivateKey == nil {
-					t.Fatalf("TestCreatePrivateKey: read private key is nil")
+					t.Fatalf("TestCreatePrivateKeyECDSA: read private key is nil")
 				}
-				if privateKey.D.Cmp(readPrivateKey.D) != 0 {
-					t.Fatalf("TestCreatePrivateKey: private key is not equal")
+				if privateKey.(*ecdsa.PrivateKey).D.Cmp(readPrivateKey.(*ecdsa.PrivateKey).D) != 0 {
+					t.Fatalf("TestCreatePrivateKeyECDSA: private key is not equal")
 				}
 			}
 		})
@@ -63,7 +65,43 @@ func TestCreatePrivateKey(t *testing.T) {
 		if !testCase.exist || testCase.force {
 			if util.FileExists(testCase.keyPath) {
 				if err := util.FileDelete(testCase.keyPath); err != nil {
-					t.Fatalf("TestCreatePrivateKey (%s): failed to delete key: %v", testCase.name, err)
+					t.Fatalf("TestCreatePrivateKeyECDSA (%s): failed to delete key: %v", testCase.name, err)
+				}
+			}
+		}
+	}
+}
+
+func TestCreatePrivateKeyRSA(t *testing.T) {
+	for _, testCase := range testCasePrivateKey {
+		t.Run(testCase.name, func(t *testing.T) {
+			privateKey, err := CreatePrivateKey(testCase.keyPath, constants.PRIVATE_KEY_TYPE_RSA, testCase.force)
+			if testCase.exist && !testCase.force {
+				if err == nil || err.Error() != "private key already exists" {
+					t.Fatalf("TestCreatePrivateKeyRSA: private key should exist")
+				}
+			} else {
+				if privateKey == nil {
+					t.Fatalf("TestCreatePrivateKeyRSA: private key is nil")
+				}
+				readPrivateKey, err := util.ReadPrivateKey(testCase.keyPath)
+				if err != nil {
+					t.Fatalf("TestCreatePrivateKeyRSA: %v", err)
+				}
+				if readPrivateKey == nil {
+					t.Fatalf("TestCreatePrivateKeyRSA: read private key is nil")
+				}
+				if privateKey.(*rsa.PrivateKey).D.Cmp(readPrivateKey.(*rsa.PrivateKey).D) != 0 {
+					t.Fatalf("TestCreatePrivateKeyRSA: private key is not equal")
+				}
+			}
+		})
+	}
+	for _, testCase := range testCasePrivateKey {
+		if !testCase.exist || testCase.force {
+			if util.FileExists(testCase.keyPath) {
+				if err := util.FileDelete(testCase.keyPath); err != nil {
+					t.Fatalf("TestCreatePrivateKeyRSA (%s): failed to delete key: %v", testCase.name, err)
 				}
 			}
 		}

@@ -1,16 +1,17 @@
 package util
 
 import (
-	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"os"
 
+	"github.com/Alonza0314/cert-go/constants"
 	logger "github.com/Alonza0314/logger-go"
 )
 
-func ReadPrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
+func ReadPrivateKey(keyPath string) (interface{}, error) {
 	keyPEM, err := os.ReadFile(keyPath)
 	if err != nil {
 		logger.Error("ReadPrivateKey", err.Error())
@@ -23,11 +24,25 @@ func ReadPrivateKey(keyPath string) (*ecdsa.PrivateKey, error) {
 		return nil, errors.New("failed to decode PEM block")
 	}
 
-	privateKey, err := x509.ParseECPrivateKey(block.Bytes)
-	if err != nil {
-		logger.Error("ReadPrivateKey", err.Error())
-		return nil, err
-	}
+	switch block.Type {
+	case string(constants.PRIVATE_KEY_TYPE_ECDSA):
+		privateKey, err := x509.ParseECPrivateKey(block.Bytes)
+		if err != nil {
+			logger.Error("ReadPrivateKey", err.Error())
+			return nil, err
+		}
+		return privateKey, nil
 
-	return privateKey, nil
+	case string(constants.PRIVATE_KEY_TYPE_RSA):
+		privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+		if err != nil {
+			logger.Error("ReadPrivateKey", err.Error())
+			return nil, err
+		}
+		return privateKey, nil
+
+	default:
+		logger.Error("ReadPrivateKey", "unsupported private key type: "+block.Type)
+		return nil, fmt.Errorf("unsupported private key type: %s", block.Type)
+	}
 }
