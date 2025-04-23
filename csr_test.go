@@ -137,18 +137,18 @@ func TestCreateCsrRSA(t *testing.T) {
 }
 
 var testCaseCreateCsrKeyTypeUnderRSA = []struct {
-	name string
-	cfg model.Certificate
+	name    string
+	cfg     model.Certificate
 	keyType constants.PrivateKeyType
 	errFlag bool
 }{
 	{
-		name: "test with ecdsa key type",
+		name:    "test with ecdsa key type",
 		keyType: constants.PRIVATE_KEY_TYPE_ECDSA,
 		errFlag: true,
 	},
 	{
-		name: "test with rsa key type",
+		name:    "test with rsa key type",
 		keyType: constants.PRIVATE_KEY_TYPE_RSA,
 		errFlag: false,
 	},
@@ -162,8 +162,8 @@ func TestCreateCsrKeyTypeUnderRSA(t *testing.T) {
 		KeyFilePath: keyPath,
 		CsrFilePath: csrPath,
 	}
-	_, err := CreatePrivateKey(keyPath, constants.PRIVATE_KEY_TYPE_RSA, false)
-	if err != nil {
+
+	if _, err := CreatePrivateKey(keyPath, constants.PRIVATE_KEY_TYPE_RSA, false); err != nil {
 		t.Fatalf("TestCreateCsrKeyTypeUnderRSA: failed to create private key: %v", err)
 	}
 
