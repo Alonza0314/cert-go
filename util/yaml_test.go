@@ -21,7 +21,6 @@ var testCaseStruct = []struct {
 					Type:          "root",
 					CertFilePath:  "./default_ca/root/root.cert.pem",
 					KeyFilePath:   "./default_ca/root/root.key.pem",
-					CsrFilePath:   "./default_ca/root/root.csr.pem",
 					IsCA:          true,
 					Organization:  "default_ca",
 					CommonName:    "default_ca",
@@ -58,6 +57,7 @@ var testCaseStruct = []struct {
 					ValidityDay:    0,
 					DNSNames:       []string{"localhost"},
 					IPAddresses:    []string{"127.0.0.1", "0.0.0.0"},
+					URIs:           []string{},
 				},
 				Client: model.Certificate{
 					Type:           "client",
@@ -74,6 +74,7 @@ var testCaseStruct = []struct {
 					ValidityDay:    0,
 					DNSNames:       []string{"localhost"},
 					IPAddresses:    []string{"127.0.0.1", "0.0.0.0"},
+					URIs:           []string{},
 				},
 			},
 		},

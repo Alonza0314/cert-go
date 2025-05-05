@@ -111,6 +111,16 @@ func signCertificate(cfg model.Certificate, keyType constants.PrivateKeyType, ov
 			publicKey = &cfg.ParentKey.(*rsa.PrivateKey).PublicKey
 		}
 
+		// generate subject key id for root certificate(self-signed)
+		if pubKey, ok := publicKey.(*rsa.PublicKey); ok {
+			pkBytes, err := x509.MarshalPKIXPublicKey(pubKey)
+			if err != nil {
+				return nil, err
+			}
+			template.SubjectKeyId = util.HashSHA1(pkBytes)
+			template.AuthorityKeyId = template.SubjectKeyId
+		}
+
 		certBytes, err = x509.CreateCertificate(rand.Reader, template, template, publicKey, cfg.ParentKey)
 		if err != nil {
 			logger.Error("signCertificate", err.Error())
@@ -148,6 +158,21 @@ func signCertificate(cfg model.Certificate, keyType constants.PrivateKeyType, ov
 		cfg.ParentKey, err = util.ReadPrivateKey(cfg.ParentKeyPath)
 		if err != nil {
 			return nil, err
+		}
+
+		// parse parent certificate and get subject key id to set authority key id
+		parentCert, err := x509.ParseCertificate(cfg.ParentCert.Raw)
+		if err != nil {
+			return nil, err
+		}
+		template.AuthorityKeyId = parentCert.SubjectKeyId
+
+		if pubKey, ok := csr.PublicKey.(*rsa.PublicKey); ok {
+			pkBytes, err := x509.MarshalPKIXPublicKey(pubKey)
+			if err != nil {
+				return nil, err
+			}
+			template.SubjectKeyId = util.HashSHA1(pkBytes)
 		}
 
 		// sign certificate with parent certificate
@@ -204,12 +229,18 @@ func SignCertificate(certType constants.CertType, keyType constants.PrivateKeyTy
 
 	switch certType {
 	case constants.CERT_TYPE_ROOT:
+		cfg.CA.Root.KeyUsage = x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign
 		return signCertificate(cfg.CA.Root, keyType, overwrite)
 	case constants.CERT_TYPE_INTERMEDIATE:
+		cfg.CA.Intermediate.KeyUsage = x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign
 		return signCertificate(cfg.CA.Intermediate, keyType, overwrite)
 	case constants.CERT_TYPE_SERVER:
+		cfg.CA.Server.KeyUsage = x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment | x509.KeyUsageContentCommitment
+		cfg.CA.Server.ExtKeyUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}
 		return signCertificate(cfg.CA.Server, keyType, overwrite)
 	case constants.CERT_TYPE_CLIENT:
+		cfg.CA.Client.KeyUsage = x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment | x509.KeyUsageContentCommitment
+		cfg.CA.Client.ExtKeyUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}
 		return signCertificate(cfg.CA.Client, keyType, overwrite)
 	}
 
