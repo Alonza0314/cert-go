@@ -37,7 +37,7 @@ ca:
     validity_day: 0
     dns_names: ["localhost"]
     ip_addresses: ["127.0.0.1", "0.0.0.0"]
-    urls: ["spiffe://localhost"]
+    uris: []
   client:
     type: client
     cert: ./default_ca/client/client.cert.pem
@@ -53,4 +53,4 @@ ca:
     validity_day: 0
     dns_names: ["localhost"]
     ip_addresses: ["127.0.0.1", "0.0.0.0"]
-    urls: ["spiffe://localhost"]
+    uris: []
