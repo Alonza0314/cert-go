@@ -117,7 +117,7 @@ func signCertificate(cfg model.Certificate, keyType constants.PrivateKeyType, ov
 			if err != nil {
 				return nil, err
 			}
-			template.SubjectKeyId = util.hashSHA1(pkBytes)
+			template.SubjectKeyId = util.HashSHA1(pkBytes)
 			template.AuthorityKeyId = template.SubjectKeyId
 		}
 
@@ -172,7 +172,7 @@ func signCertificate(cfg model.Certificate, keyType constants.PrivateKeyType, ov
 			if err != nil {
 				return nil, err
 			}
-			template.SubjectKeyId = hashSHA1(pkBytes)
+			template.SubjectKeyId = util.HashSHA1(pkBytes)
 		}
 
 		// sign certificate with parent certificate
