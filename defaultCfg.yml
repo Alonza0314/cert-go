@@ -3,7 +3,6 @@ ca:
     type: root
     cert: ./default_ca/root/root.cert.pem
     private_key: ./default_ca/root/root.key.pem
-    csr: ./default_ca/root/root.csr.pem
     is_ca: true
     organization: "default_ca"
     common_name: "default_ca"
@@ -38,6 +37,7 @@ ca:
     validity_day: 0
     dns_names: ["localhost"]
     ip_addresses: ["127.0.0.1", "0.0.0.0"]
+    urls: ["spiffe://localhost"]
   client:
     type: client
     cert: ./default_ca/client/client.cert.pem
@@ -53,3 +53,4 @@ ca:
     validity_day: 0
     dns_names: ["localhost"]
     ip_addresses: ["127.0.0.1", "0.0.0.0"]
+    urls: ["spiffe://localhost"]
