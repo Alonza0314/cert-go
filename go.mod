@@ -4,7 +4,7 @@ go 1.22.5
 
 require (
 	github.com/Alonza0314/logger-go v1.2.2
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
